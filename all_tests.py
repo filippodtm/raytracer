@@ -210,12 +210,8 @@ class CanvasTest(unittest.TestCase):
 class Matrixtest(unittest.TestCase):
 
     def test_creatematrix(self):
-        M = mytuple.Matrix(4,4)
-        M[0,:] = [1,2,3,4]
-        M[1,:] = [5.5, 6.5, 7.5, 8.5]
-        M[2,:] = [9, 10, 11, 12]
-        M[3,:] = [13.5, 14.5, 15.5, 16.5]
-        #M[:,:] = [[1,2,3,4],[5.5, 6.5, 7.5, 8.5],[9,10,11,12],[13.5,14.5,15.5,16.5]]
+        M = mytuple.Matrix([[1,2,3,4],[5.5, 6.5, 7.5, 8.5],
+                            [9,10,11,12],[13.5,14.5,15.5,16.5]])
 
         self.assertEqual(M[0,0], 1)
         self.assertEqual(M[0,3], 4)
@@ -227,9 +223,7 @@ class Matrixtest(unittest.TestCase):
         
 
     def test_create2x2matrix(self):
-        M = mytuple.Matrix(2,2)
-        M[0,:] = [-3,5]
-        M[1,:] = [1,-2]
+        M = mytuple.Matrix([[-3,5],[1,-2]])
 
         self.assertEqual(M[0,0], -3)
         self.assertEqual(M[0,1], 5)
@@ -237,83 +231,67 @@ class Matrixtest(unittest.TestCase):
         self.assertEqual(M[1,1], -2)
 
     def test_create3x3matrix(self):
-        M = mytuple.Matrix(3,3)
-        M[0,:] = [-3,5, 0]
-        M[1,:] = [1,-2,-7]
-        M[2,:] = [0, 1, 1]
+        M = mytuple.Matrix([[-3,5, 0], [1,-2,-7],[0, 1, 1]])
 
         self.assertEqual(M[0,0], -3)
         self.assertEqual(M[1,1], -2)
         self.assertEqual(M[2,2], 1)
 
     def test_equalmatrix(self):
-        A = mytuple.Matrix(4,4)
-        A[0,:] = [1,2,3,4]
-        A[1,:] = [5,6,7,8]
-        A[2,:] = [9,8,7,6]
-        A[3,:] = [5,4,3,2]
-        B = mytuple.Matrix(4,4)
-        B[0,:] = [1,2,3,4]
-        B[1,:] = [5,6,7,8]
-        B[2,:] = [9,8,7,6]
-        B[3,:] = [5,4,3,2]
+        A = mytuple.Matrix([[1,2,3,4],[5,6,7,8],[9,8,7,6],[5,4,3,2]])
+        B = mytuple.Matrix([[1,2,3,4],[5,6,7,8],[9,8,7,6],[5,4,3,2]])
 
         self.assertEqual(A==B, True)
 
     def test_differentmatrix(self):
-        A = mytuple.Matrix(4,4)
-        A[0,:] = [1,2,3,4]
-        A[1,:] = [5,6,7,8]
-        A[2,:] = [9,8,7,6]
-        A[3,:] = [5,4,3,2]
-
-        B = mytuple.Matrix(4,4)
-        B[0,:] = [2,3,4,5]
-        B[1,:] = [6,7,8,9]
-        B[2,:] = [8,7,6,5]
-        B[3,:] = [4,3,2,1]
+        A = mytuple.Matrix([[1,2,3,4],
+                            [5,6,7,8],
+                            [9,8,7,6],
+                            [5,4,3,2]])
+        B = mytuple.Matrix([[2,3,4,5],
+                            [6,7,8,9],
+                            [8,7,6,5],
+                            [4,3,2,1]])
 
         self.assertEqual(A!=B, True)
 
     def test_matrixmult(self):
-        A = mytuple.Matrix(4,4)
-        A[0,:] = [1,2,3,4]
-        A[1,:] = [5,6,7,8]
-        A[2,:] = [9,8,7,6]
-        A[3,:] = [5,4,3,2]
-
-        B = mytuple.Matrix(4,4)
-        B[0,:] = [-2,1,2,3]
-        B[1,:] = [3,2,1,-1]
-        B[2,:] = [4,3,6,5]
-        B[3,:] = [1,2,7,8]
-
-        C = mytuple.Matrix(4,4)
-        C[0,:] = [20,22,50,48]
-        C[1,:] = [44,54,114,108]
-        C[2,:] = [40,58,110,102]
-        C[3,:] = [16,26,46,42]
-
+        A = mytuple.Matrix([[1,2,3,4],
+                            [5,6,7,8],
+                            [9,8,7,6],
+                            [5,4,3,2]])
+        B = mytuple.Matrix([[-2,1,2, 3],
+                            [3, 2,1,-1],
+                            [4, 3,6, 5],
+                            [1, 2,7, 8]])
+        C = mytuple.Matrix([[20,22, 50, 48],
+                            [44,54,114,108],
+                            [40,58,110,102],
+                            [16,26, 46, 42]])
         self.assertEqual(A*B, C)
 
     def test_matrixtuple(self):
-        A = mytuple.Matrix(4,4)
-        A[0,:] = [1,2,3,4]
-        A[1,:] = [2,4,4,2]
-        A[2,:] = [8,6,4,1]
-        A[3,:] = [0,0,0,1]
+        A = mytuple.Matrix([[1,2,3,4],
+                            [2,4,4,2],
+                            [8,6,4,1],
+                            [0,0,0,1]])
         b = mytuple.MyTuple(1,2,3,1)
         c = mytuple.MyTuple(18,24,33,1)
 
         self.assertEqual(A*b, c)
 
     def test_matrixbyidentity(self):
-        A = mytuple.Matrix(4,4)
-        A[0,:] = [0,1,2,4]
-        A[1,:] = [1,2,4,8]
-        A[2,:] = [2,4,8,16]
-        A[3,:] = [4,8,16,32]
+        A = mytuple.Matrix([[0,1, 2, 4],
+                            [1,2, 4, 8],
+                            [2,4, 8,16],
+                            [4,8,16,32]])
 
         self.assertEqual(A* mytuple.Idmatrix, A)
 
-    
+    def test_tuplebyidentity(self):
+        a = mytuple.MyTuple(1,2,3,4)
+
+        self.assertEqual(mytuple.Idmatrix *a, a)
+
+#    def test_transpose(self):
+        
