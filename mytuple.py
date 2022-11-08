@@ -133,52 +133,6 @@ def trajectory(g, wind, x0, v0):
 
 
 
-# class Matrix:
-#     def __init__(self, mrows=4, ncolumns=4 ):
-#         self.mrows = mrows
-#         self.ncolumns = ncolumns
-#         self.grid = [[0]*ncolumns  for _ in range(mrows)]
-
-#     def __getitem__(self, tupla):
-#         i,j = tupla
-#         return self.grid[i][j]
-
-#     def __repr__(self):
-#         output= "Matrix: \n"
-#         for i in range(self.mrows):
-#             output += ('|'+ ' |'.join(map(lambda elem: f'{elem: 8.6g}',
-#                                                           self.grid[i])) + '|\n')
-#         return output
-
-#     def __setitem__(self, tupla, value):
-#         i,j = tupla
-#         self.grid[i][j] = value
-
-#     def __eq__(self, other):
-#         equal = True
-#         for i in range(self.mrows):
-#             for j in range(self.ncolumns):
-#                 equal &= math.isclose(self.grid[i][j],other.grid[i][j])
-#         return equal
-
-#     def __mul__(self, other):
-#         if other.__class__==Matrix:
-#             M = Matrix(self.mrows, other.ncolumns)
-#             for i in range(self.mrows):
-#                 for j in range(other.ncolumns):
-#                     #prodotto righe per colonne
-#                     M[i,j] = sum([self[i,_]*other[_,j] for _ in range(self.ncolumns)])
-#             return M
-#         elif other.__class__==MyTuple: #solo matrici 4x4
-#             x,y,z,w = self[0,:]
-#             a = MyTuple.dot(MyTuple(x,y,z,w), other)
-#             x,y,z,w = self[1,:]
-#             b = MyTuple.dot(MyTuple(x,y,z,w), other)
-#             x,y,z,w = self[2,:]
-#             c = MyTuple.dot(MyTuple(x,y,z,w), other)
-#             x,y,z,w = self[3,:]
-#             d = MyTuple.dot(MyTuple(x,y,z,w), other)
-#             return MyTuple(a,b,c,d)
 
 
 
@@ -187,6 +141,9 @@ def trajectory(g, wind, x0, v0):
 class Matrix:
     def createzeros(m,n):
         return Matrix( [[0]*n for _ in range(m)] )
+
+    def Id():
+        return Matrix([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
     
     def __init__(self, data):
         self.__data = data
@@ -207,27 +164,33 @@ class Matrix:
     def __repr__(self):
         output= "Matrix: \n"
         for i in range(self.mrows):
-            output += ('|'+ ' |'.join(map(lambda elem: f'{elem: 8.6g}',
+            output += ('|'+ ' |'.join(map(lambda elem: f'{elem: 9.8g}',
                                                           self.__data[i])) + '|\n')
         return output
 
     def __setitem__(self, tupla, value):
         i,j = tupla
         self.__data[i][j] = value
-
-    def __eq__(self, other):
-        equal = True
+    
+    def equal(self,other):
+        res = True
         for i in range(self.mrows):
             for j in range(self.ncolumns):
-                equal &= math.isclose(self.__data[i][j],other.__data[i][j])
-        return equal
+                res &= math.isclose(self.__data[i][j], other.__data[i][j])
+        return res
+    
+    def round(self):
+        return Matrix([[ round(self[i,j],ndigits=5)  for j in range(self.ncolumns)]
+                                                     for i in range(self.mrows)])
 
+    
     def __mul__(self, other):
         if other.__class__==Matrix:
-            M = Matrix([[ sum([self[i,_]*other[_,j] for _ in range(self.ncolumns)])
-                          #prodotto righe per colonne
-                         for j in range(other.ncolumns)] for i in range(self.mrows)])
-            return M
+            return Matrix([[ sum([self[i,_]*other[_,j] for _ in range(self.ncolumns)])
+                             #prodotto righe per colonne
+                             for j in range(other.ncolumns)]
+                              for i in range(self.mrows) ])
+        
         elif other.__class__==MyTuple: #solo matrici 4x4
             x,y,z,w = self[0,:]
             a = MyTuple.dot(MyTuple(x,y,z,w), other)
@@ -240,21 +203,56 @@ class Matrix:
             
             return MyTuple(a,b,c,d)
 
+    def transpose(self):
+        return Matrix([[self[i,j] for i in range(self.mrows)]
+                                  for j in range(self.ncolumns)])
+    
+    def submatrix(self, i0,j0):
+        return Matrix([[self[i,j] for j in range(self.ncolumns) if j!=j0]
+                                     for i in range(self.mrows) if i!=i0])
+
+    def minor(self, i0, j0):
+        return Matrix.det(self.submatrix(i0,j0))
+
+    def cofactor(self, i,j):
+        return (-1)**(i+j) * self.minor(i,j)
+
+    
+    def det(self):
+        assert(self.mrows == self.ncolumns)
+        if self.mrows ==1:
+                return self[0,0]
+        elif self.mrows ==2:
+                return self[0,0]*self[1,1] - self[1,0]*self[0,1]
+        else:
+            det=0
+            #print(self.__data)
+            for j in range(self.ncolumns):
+                det += self[0,j]* self.cofactor(0,j)
+        return det
+
+    def invertible(self):
+        return not(math.isclose(self.det(),0))
+
+    def inverse(self):
+        assert(self.invertible()==True)
+        inv = Matrix([[ self.cofactor(i,j)/ self.det()  for j in range(self.ncolumns)]
+                                                         for i in range(self.mrows) ])
+        inv = inv.transpose()
+        return inv
+
+    
+    
 
 
 
-        
-Idmatrix = Matrix([[1,0,0,0],
-                   [0,1,0,0],
-                   [0,0,1,0],
-                   [0,0,0,1]])
 
-
-
-#print(Matrix.createzeros(3,2))
-
+    
 # B = Matrix([[-2,1,2,3], [3,2,1,-1]])
-# B[0,:] = [4,3,6,5]
-# B[1,:] = [1,2,7,8]
+# print(B.transpose())
 # print(B[1,0])
 #a = self[0,0]*other.x + self[0,1]*other.y + self[0,2]*other.z + self[0,3]*other.w
+
+
+# m = Matrix([[2,0.009999],[3,4.000000000000000000]])
+
