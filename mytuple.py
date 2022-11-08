@@ -244,7 +244,17 @@ class Matrix:
     
     
 
+class Translation(Matrix):
+    def __init__(self, x,y,z):
+        data = []
+        self.__data = data
+        self.checkvalidity()
+        self.mrows = len(data)
+        self.ncolumns = len(data[0])
 
+
+
+        
 
 
     
@@ -252,7 +262,3 @@ class Matrix:
 # print(B.transpose())
 # print(B[1,0])
 #a = self[0,0]*other.x + self[0,1]*other.y + self[0,2]*other.z + self[0,3]*other.w
-
-
-# m = Matrix([[2,0.009999],[3,4.000000000000000000]])
-
