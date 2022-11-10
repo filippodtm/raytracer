@@ -520,3 +520,17 @@ class Transformationstest(unittest.TestCase):
     def test_chainedtransf(self):
         p = mytuple.Point(1,0,1)
         A = mytuple.Matrix.xrotation(math.pi/2)
+        B = mytuple.Matrix.scaling(5,5,5)
+        C = mytuple.Matrix.translation(10,5,7)
+
+        p2 = A*p
+        self.assertEqual(p2, mytuple.Point(1,-1,0))
+        p3 = B*p2
+        self.assertEqual(p3, mytuple.Point(5,-5,0))
+        p4 = C*p3
+        self.assertEqual(p4, mytuple.Point(15,0,7))
+
+        T = C*B*A
+        # T = mytuple.Matrix.Id().xrotation(math.pi/2).scaling(5,5,5).translation(10,5,7)
+        self.assertEqual(T*p, mytuple.Point(15,0,7))
+

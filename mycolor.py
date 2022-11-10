@@ -1,6 +1,7 @@
 import math
 import mytuple  #per trajectory()
 
+
 class Color:
     
     def __init__(self, red, green, blue):
@@ -79,7 +80,7 @@ def canvastoppm(canvas: Canvas, filename: str):
                            str(round(max(0, min(scaledcolor.green, 255)))),
                            str(round( max(0, min(scaledcolor.blue, 255))))]
                 for i in colstr:
-                    if n +len(i)>=69:
+                    if n +len(i)>=69:  #no lines longer than 70
                         ppmfile.write("\n")
                         n=0
                     n+=len(i)+1
