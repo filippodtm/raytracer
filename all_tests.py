@@ -549,5 +549,3 @@ class RayTest(unittest.TestCase):
 
         self.assertEqual(r.origin, origin)
         self.assertEqual(r.direction, direction)
-
-    def test_computepoint(self):
