@@ -437,7 +437,86 @@ class Matrixtest(unittest.TestCase):
 class Transformationstest(unittest.TestCase):
 
     def test_translation(self):
-        tran = mytuple.Translation(5,-3,2)
+        tran = mytuple.Matrix.translation(5,-3,2)
         p = mytuple.Point(-3,4,5)
+        
+        self.assertEqual( tran*p, mytuple.Point(2,1,7))
 
-        self.assertEqual(tran*p, mytuple.Point(2,1,7))
+        inv = tran.inverse()
+        self.assertEqual(inv*p, mytuple.Point(-8,7,3))
+
+        v = mytuple.Vector(-3,4,5)
+        self.assertEqual(tran*v, v)  #doesn't change vectors
+
+    def test_scaling(self):
+        transf = mytuple.Matrix.scaling(2,3,4)
+        p = mytuple.Point(-4,6,8)
+        v = mytuple.Vector(-4,6,8)
+
+        self.assertEqual( transf*p, mytuple.Point(-8,18,32))
+        self.assertEqual( transf*v, mytuple.Vector(-8,18,32)) #acting on vectors
+
+        inv = transf.inverse()
+        self.assertEqual( inv*v, mytuple.Vector(-2,2,2))
+
+    def test_reflection(self):
+        transf = mytuple.Matrix.scaling(-1,1,1)
+        p = mytuple.Point(2,3,4)
+
+        self.assertEqual(transf*p, mytuple.Point(-2,3,4))
+
+        
+    def test_xrotation(self):
+        p = mytuple.Point(0,1,0)
+        halfquarter = mytuple.Matrix.xrotation(math.pi /4)
+        fullquarter = mytuple.Matrix.xrotation(math.pi /2)
+
+        self.assertEqual(halfquarter*p, mytuple.Point(0,math.sqrt(2)/2, math.sqrt(2)/2))
+        self.assertEqual(fullquarter*p, mytuple.Point(0,0,1))
+
+        inv = halfquarter.inverse()
+        self.assertEqual(inv*p,  mytuple.Point(0,math.sqrt(2)/2,-math.sqrt(2)/2))
+
+    def test_yrotation(self):
+        p= mytuple.Point(0,0,1)
+        halfquarter = mytuple.Matrix.yrotation(math.pi /4)
+        fullquarter = mytuple.Matrix.yrotation(math.pi /2)
+
+        self.assertEqual(halfquarter*p, mytuple.Point(math.sqrt(2)/2, 0, math.sqrt(2)/2))
+        self.assertEqual(fullquarter*p, mytuple.Point(1,0,0))
+
+    def test_zrotation(self):
+        p= mytuple.Point(0,1,0)
+        halfquarter = mytuple.Matrix.zrotation(math.pi /4)
+        fullquarter = mytuple.Matrix.zrotation(math.pi /2)
+
+        self.assertEqual(halfquarter*p , mytuple.Point(- math.sqrt(2)/2, math.sqrt(2)/2,0))
+        self.assertEqual(fullquarter*p , mytuple.Point(-1,0,0))
+
+
+        
+    def test_shear(self):
+        p = mytuple.Point(2,3,4)
+
+        #x changes
+        tr = mytuple.Matrix.shear(1,0,0, 0,0,0)
+        self.assertEqual(tr*p , mytuple.Point(5,3,4))
+        
+        tr = mytuple.Matrix.shear(0,1,0, 0,0,0)
+        self.assertEqual(tr*p , mytuple.Point(6,3,4))
+        #y changes
+        tr = mytuple.Matrix.shear(0,0,1, 0,0,0)
+        self.assertEqual(tr*p , mytuple.Point(2,5,4))
+
+        tr = mytuple.Matrix.shear(0,0,0, 1,0,0)
+        self.assertEqual(tr*p , mytuple.Point(2,7,4))
+        #z changes
+        tr = mytuple.Matrix.shear(0,0,0, 0,1,0)
+        self.assertEqual(tr*p , mytuple.Point(2,3,6))
+
+        tr = mytuple.Matrix.shear(0,0,0, 0,0,1)
+        self.assertEqual(tr*p , mytuple.Point(2,3,7))
+
+    def test_chainedtransf(self):
+        p = mytuple.Point(1,0,1)
+        A = mytuple.Matrix.xrotation(math.pi/2)

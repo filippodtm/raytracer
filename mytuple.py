@@ -12,15 +12,21 @@ class MyTuple:
     
     def is_vector(self):
         return math.isclose(self.w, 0)
-    
+
+    # if self.is_point():        #non funzia
+    #     self.__class__ = Point
+    # elif self.is_vector():
+    #     self.__class__ = Vector
+        
     def __repr__(self):
         return f"MyTuple({self.x}, {self.y}, {self.z}, {self.w})"
 
     def __eq__(self, other):
-        return math.isclose(self.x, other.x) and math.isclose(self.y,
-                                    other.y) and math.isclose(self.z,
-                                    other.z) and math.isclose(self.w, other.w)
-
+        return math.isclose(self.x,other.x,
+                            abs_tol=1e-14) and math.isclose(self.y,
+                            other.y, abs_tol=1e-14) and math.isclose(self.z,
+                            other.z, abs_tol=1e-14) and math.isclose(self.w, other.w,
+                                                                         abs_tol=1e-14)
     
     def __add__(self, other):
         return MyTuple(self.x+ other.x, self.y + other.y,
@@ -89,9 +95,6 @@ class Vector(MyTuple):
 class Projectile:
     def __init__(self, position: Point, velocity: Vector):
 
-        #if position.is_point() and velocity.is_vector():
-        #    position.__class__ = Point
-        #    velocity.__class__ = Vector
         self.position= position
         self.velocity= velocity
         
@@ -105,9 +108,7 @@ class Environment:
 
     def __repr__(self):
         return f"Environment({self.gravity}, {self.wind})"
-
-
-                                                                                                                                                                                                                                                                                         
+                                                      
     
 def tick(env: Environment, proj: Projectile):
     """returns projectile with a new position and
@@ -136,26 +137,70 @@ def trajectory(g, wind, x0, v0):
 
 
 
-        
+
+
+
 
 class Matrix:
+    @staticmethod
     def createzeros(m,n):
         return Matrix( [[0]*n for _ in range(m)] )
 
     def Id():
         return Matrix([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
-    
-    def __init__(self, data):
-        self.__data = data
-        self.checkvalidity()
-        self.mrows = len(data)
-        self.ncolumns = len(data[0])
 
-    def checkvalidity(self):
-        m = len(self.__data)
-        n = len(self.__data[0])
+    @staticmethod
+    def translation(x,y,z):
+        return Matrix([[1,0,0,x],
+                       [0,1,0,y],
+                       [0,0,1,z],
+                       [0,0,0,1]])
+
+    @staticmethod
+    def scaling(x,y,z):
+        return Matrix([[x,0,0,0],[0,y,0,0],[0,0,z,0],[0,0,0,1]])    
+
+    @staticmethod
+    def xrotation(r):
+        return Matrix([[1, 0, 0, 0],
+                       [0,math.cos(r),-math.sin(r),0],
+                       [0,math.sin(r), math.cos(r),0],
+                       [0, 0, 0, 1]])
+    @staticmethod
+    def yrotation(r):
+        return Matrix([[ math.cos(r),0,math.sin(r),0],
+                       [0,1,0,0],
+                       [-math.sin(r),0,math.cos(r),0],
+                       [0, 0, 0, 1]])
+    @staticmethod
+    def zrotation(r):
+        return Matrix([[math.cos(r),-math.sin(r),0,0],
+                       [math.sin(r), math.cos(r),0,0],
+                       [0, 0, 1, 0],
+                       [0, 0, 0, 1]])
+
+    @staticmethod
+    def shear(x2,x3,y1,y3,z1,z2):
+        return Matrix([[1, x2,x3,0],
+                       [y1,1, y3,0],
+                       [z1,z2, 1,0],
+                       [0, 0, 0, 1]])
+
+    
+    
+    def __init__(self, grid):
+        self.checkvalidity(grid) #ha self ma non dipende da self
+        
+        self.__data = grid
+        self.mrows = len(self.__data)
+        self.ncolumns = len(self.__data[0])
+
+    @staticmethod
+    def checkvalidity(grid):
+        m = len(grid)
+        n = len(grid)
         for i in range(m):
-            assert(len(self.__data[i])==n)
+            assert(len(grid[i])==n)
 
     def __getitem__(self, tupla):
         i,j = tupla
@@ -184,14 +229,14 @@ class Matrix:
                                                      for i in range(self.mrows)])
 
     
-    def __mul__(self, other):
+    def __mul__(self, other): #solo matrici 4x4
         if other.__class__==Matrix:
             return Matrix([[ sum([self[i,_]*other[_,j] for _ in range(self.ncolumns)])
                              #prodotto righe per colonne
                              for j in range(other.ncolumns)]
                               for i in range(self.mrows) ])
         
-        elif other.__class__==MyTuple: #solo matrici 4x4
+        elif other.__class__ in (MyTuple, Point,Vector):
             x,y,z,w = self[0,:]
             a = MyTuple.dot(MyTuple(x,y,z,w), other)
             x,y,z,w = self[1,:]
@@ -241,17 +286,14 @@ class Matrix:
         inv = inv.transpose()
         return inv
 
-    
+
     
 
-class Translation(Matrix):
-    def __init__(self, x,y,z):
-        data = []
-        self.__data = data
-        self.checkvalidity()
-        self.mrows = len(data)
-        self.ncolumns = len(data[0])
+    
 
+
+
+        
 
 
         
