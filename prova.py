@@ -9,7 +9,7 @@ g= Vector(0,-0.1,0)
 wind = Vector(-0.02 ,0,0)
 
 #drawtrajectory(g, wind, x0, v0, 900, 550, "traiettoria1.ppm")
-drawclockwise(canvaswidth =700, canvasheight= 550, filename='orologio1.ppm')
+drawclockwise(canvaswidth =550, canvasheight= 550, filename='orologio1.ppm')
 
 
 

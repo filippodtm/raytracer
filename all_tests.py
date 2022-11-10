@@ -534,3 +534,20 @@ class Transformationstest(unittest.TestCase):
         # T = mytuple.Matrix.Id().xrotation(math.pi/2).scaling(5,5,5).translation(10,5,7)
         self.assertEqual(T*p, mytuple.Point(15,0,7))
 
+
+
+
+
+
+
+class RayTest(unittest.TestCase):
+
+    def test_createray(self):
+        origin = mytuple.Point(1,2,3)
+        direction = mytuple.Vector(4,5,6)
+        r = mycolor.ray(origin,direction)
+
+        self.assertEqual(r.origin, origin)
+        self.assertEqual(r.direction, direction)
+
+    def test_computepoint(self):

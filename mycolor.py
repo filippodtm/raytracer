@@ -62,10 +62,7 @@ class Canvas():
     def writepixel(self, x,y, col):
         self.grid[x][y] = col
         #non prende self i,j
-        
-# canvas1= Canvas(2, 5)
-# print(canvas1.grid)
-# print("\n", canvas1[1,4]) 
+
 
 
 def canvastoppm(canvas: Canvas, filename: str):
@@ -98,3 +95,17 @@ def drawtrajectory(g, wind, x0, v0, canvaswidth, canvasheight, filename):
         canvas.writepixel( xi,yi, Color(1,1,0))
 
     canvastoppm(canvas, filename)
+
+
+
+
+
+class ray:
+    def __init__(self, origin: mytuple.Point, direction: mytuple.Vector):
+        self.origin= origin
+        self.direction = direction
+        
+    def __repr__(self):
+        return f"Ray({self.origin}, {self.direction})"
+
+    
