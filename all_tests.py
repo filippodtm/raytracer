@@ -549,3 +549,11 @@ class RayTest(unittest.TestCase):
 
         self.assertEqual(r.origin, origin)
         self.assertEqual(r.direction, direction)
+
+    def test_computepoint(self):
+        r = mycolor.ray(mytuple.Point(2,3,4), mytuple.Vector(1,0,0))
+
+        self.assertEqual(r.position(0),  mytuple.Point(2, 3, 4))
+        self.assertEqual(r.position(1),  mytuple.Point(3, 3, 4))
+        self.assertEqual(r.position(-1), mytuple.Point(1, 3, 4))
+        self.assertEqual(r.position(2.5), mytuple.Point(4.5, 3, 4))

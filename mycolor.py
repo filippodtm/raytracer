@@ -106,6 +106,7 @@ class ray:
         self.direction = direction
         
     def __repr__(self):
-        return f"Ray({self.origin}, {self.direction})"
+        return f"Ray({self.origin}, {self.direction}) "
 
-    
+    def position(self, t):
+        return self.origin+ t* self.direction
