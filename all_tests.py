@@ -545,13 +545,13 @@ class RayTest(unittest.TestCase):
     def test_createray(self):
         origin = mytuple.Point(1,2,3)
         direction = mytuple.Vector(4,5,6)
-        r = mycolor.ray(origin,direction)
+        r = mytuple.ray(origin,direction)
 
         self.assertEqual(r.origin, origin)
         self.assertEqual(r.direction, direction)
 
     def test_computepoint(self):
-        r = mycolor.ray(mytuple.Point(2,3,4), mytuple.Vector(1,0,0))
+        r = mytuple.ray(mytuple.Point(2,3,4), mytuple.Vector(1,0,0))
 
         self.assertEqual(r.position(0),  mytuple.Point(2, 3, 4))
         self.assertEqual(r.position(1),  mytuple.Point(3, 3, 4))
@@ -559,47 +559,100 @@ class RayTest(unittest.TestCase):
         self.assertEqual(r.position(2.5), mytuple.Point(4.5, 3, 4))
 
         
-    def test_intersect2points(self):
+    def test_inters2points(self):
         r = mytuple.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
         s = mytuple.sphere()
-        xs = mytuple.intersect(s,r)
+        xs = r.inters(s)
 
         self.assertEqual(len(xs), 2)
-        self.assertEqual(xs[0], 4.0)
-        self.assertEqual(xs[1], 6.0)
+        self.assertEqual(xs[0].t, 4.0)
+        self.assertEqual(xs[1].t, 6.0)
 
-    # def test_intersect1tangent(self):
-    #     r = mycolor.ray(mytuple.Point(0,1,-5), mytuple.Vector(0,0,1))
-    #     s = mycolor.sphere()
-    #     xs = mycolor.intersect(s,r)
+    def test_inters1tangent(self):
+        r = mytuple.ray(mytuple.Point(0,1,-5), mytuple.Vector(0,0,1))
+        s = mytuple.sphere()
+        xs = r.inters(s)
 
-    #     self.assertEqual(len(xs), 2)
-    #     self.assertEqual(xs[0], 5.0)
-    #     self.assertEqual(xs[1], 5.0)
+        self.assertEqual(len(xs), 2)
+        self.assertEqual(xs[0].t, 5.0)
+        self.assertEqual(xs[1].t, 5.0)
 
-    # def test_intersect0(self):
-    #     r = mycolor.ray(mytuple.Point(0,2,-5), mytuple.Vector(0,0,1))
-    #     s = mycolor.sphere()
-    #     xs = mycolor.intersect(s,r)
+    def test_inters0(self):
+        r = mytuple.ray(mytuple.Point(0,2,-5), mytuple.Vector(0,0,1))
+        s = mytuple.sphere()
+        xs = r.inters(s)
 
-    #     self.assertEqual(len(xs), 0)
+        self.assertEqual(len(xs), 0)
 
-    # def test_intersect_inside(self):
-    #     mycolor.ray(mytuple.Point(0,0,0), mytuple.Vector(0,0,1))
-    #     s = mycolor.sphere()
-    #     xs = mycolor.intersect(s,r)
+    def test_inters_inside(self):
+        r = mytuple.ray(mytuple.Point(0,0,0), mytuple.Vector(0,0,1))
+        s = mytuple.sphere()
+        xs = r.inters(s)
 
-    #     self.assertEqual(len(xs), 2)
-    #     self.assertEqual(xs[0],-1.0)
-    #     self.assertEqual(xs[1], 1.0)
+        self.assertEqual(len(xs), 2)
+        self.assertEqual(xs[0].t,-1.0)
+        self.assertEqual(xs[1].t, 1.0)
 
-    # def test_intersect_behind(self):
-    #     mycolor.ray(mytuple.Point(0,0,5), mytuple.Vector(0,0,1))
-    #     s = mycolor.sphere()
-    #     xs = mycolor.intersect(s,r)
+    def test_inters_behind(self):
+        r = mytuple.ray(mytuple.Point(0,0,5), mytuple.Vector(0,0,1))
+        s = mytuple.sphere()
+        xs = r.inters(s)
 
-    #     self.assertEqual(len(xs), 2)
-    #     self.assertEqual(xs[0], -6.0)
-    #     self.assertEqual(xs[1], -4.0)
+        self.assertEqual(len(xs), 2)
+        self.assertEqual(xs[0].t, -6.0)
+        self.assertEqual(xs[1].t, -4.0)
 
-    
+        
+    def test_intersection(self):
+        s = mytuple.sphere()
+        
+        i = mytuple.intersection(3.5, s)
+        self.assertEqual(i.t, 3.5)
+        self.assertEqual(i.obj, s)
+
+    def test_aggregateintersections(self):
+        s = mytuple.sphere()
+        i1 = mytuple.intersection(1, s)
+        i2 = mytuple.intersection(2, s)
+        xs = mytuple.intersections(i1,i2) #no sense?
+
+        self.assertEqual(len(xs), 2)
+        self.assertEqual(xs[0].t , 1)
+        self.assertEqual(xs[1].t , 2)
+
+    def test_inters_setobj(self):
+        r = mytuple.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
+        s = mytuple.sphere()
+        xs = r.inters(s)
+
+        self.assertEqual(len(xs), 2)
+        self.assertEqual(xs[0].obj , s)
+        self.assertEqual(xs[1].obj , s)
+
+        
+    def test_hit_positive(self):
+        s = mytuple.sphere()
+        i1 = mytuple.intersection(1, s)
+        i2 = mytuple.intersection(2, s)
+        xs = mytuple.intersections(i2,i1)
+        i = mytuple.hit(xs)
+
+        self.assertEqual(i, i1)
+
+    def test_hit1pos1neg(self):
+        s = mytuple.sphere()
+        i1 = mytuple.intersection(-1, s)
+        i2 = mytuple.intersection(1, s)
+        xs = mytuple.intersections(i2,i1)
+        i = mytuple.hit(xs)
+
+        self.assertEqual(i, i2)
+
+    def test_hit_negative(self):
+        s = mytuple.sphere()
+        i1 = mytuple.intersection(-2, s)
+        i2 = mytuple.intersection(-1, s)
+        xs = mytuple.intersections(i2,i1)
+        i = mytuple.hit(xs)
+
+        self.assertEqual(i, None)
