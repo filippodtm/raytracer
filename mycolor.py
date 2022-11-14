@@ -48,7 +48,7 @@ class Color:
 
 
     
-class Canvas():
+class Canvas:
     def __init__(self, width, height):
         self.width = width
         self.height = height
@@ -100,13 +100,6 @@ def drawtrajectory(g, wind, x0, v0, canvaswidth, canvasheight, filename):
 
 
 
-class ray:
-    def __init__(self, origin: mytuple.Point, direction: mytuple.Vector):
-        self.origin= origin
-        self.direction = direction
-        
-    def __repr__(self):
-        return f"Ray({self.origin}, {self.direction}) "
 
-    def position(self, t):
-        return self.origin+ t* self.direction
+
+

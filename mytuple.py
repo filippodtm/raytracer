@@ -287,20 +287,66 @@ class Matrix:
         return inv
 
 
-    
-
-    
-
-
-
-        
-
-
-        
-
 
     
 # B = Matrix([[-2,1,2,3], [3,2,1,-1]])
 # print(B.transpose())
 # print(B[1,0])
 #a = self[0,0]*other.x + self[0,1]*other.y + self[0,2]*other.z + self[0,3]*other.w
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class sphere:
+    def __init__(self):
+        pass
+    
+
+s = sphere()
+print(s)
+    
+
+
+
+class ray:
+    def __init__(self, origin: Point, direction: Vector):
+        self.origin= origin
+        self.direction = direction
+        
+    def __repr__(self):
+        return f"Ray({self.origin}, {self.direction}) "
+
+    def position(self, t):
+        return self.origin+ t* self.direction
+
+    def intersect(self, s: sphere):
+        #vector center of sphere --> ray.origin
+        v = ray.origin - Point(0,0,0)
+
+        # we look for t sol. of: ||v + t*dir||^2 =1
+        # ie:      |dir|^ t^ + 2<dir,v> t + |v|^ = 1
+        a = MyTuple.dot(ray.direction,ray.direction)
+        b = 2* MyTuple.dot(ray.direction, v)
+        c = MyTuple.dot(v,v) -1
+        delta = b**2 -4*a*c
+        if delta<0:
+            return ()
+        else:
+            t1 = (-b-math.sqrt(delta)) /(2*a)
+            t2 = (-b+math.sqrt(delta)) /(2*a)
+            return (t1,t2)
+        

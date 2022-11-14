@@ -557,3 +557,49 @@ class RayTest(unittest.TestCase):
         self.assertEqual(r.position(1),  mytuple.Point(3, 3, 4))
         self.assertEqual(r.position(-1), mytuple.Point(1, 3, 4))
         self.assertEqual(r.position(2.5), mytuple.Point(4.5, 3, 4))
+
+        
+    def test_intersect2points(self):
+        r = mytuple.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
+        s = mytuple.sphere()
+        xs = mytuple.intersect(s,r)
+
+        self.assertEqual(len(xs), 2)
+        self.assertEqual(xs[0], 4.0)
+        self.assertEqual(xs[1], 6.0)
+
+    # def test_intersect1tangent(self):
+    #     r = mycolor.ray(mytuple.Point(0,1,-5), mytuple.Vector(0,0,1))
+    #     s = mycolor.sphere()
+    #     xs = mycolor.intersect(s,r)
+
+    #     self.assertEqual(len(xs), 2)
+    #     self.assertEqual(xs[0], 5.0)
+    #     self.assertEqual(xs[1], 5.0)
+
+    # def test_intersect0(self):
+    #     r = mycolor.ray(mytuple.Point(0,2,-5), mytuple.Vector(0,0,1))
+    #     s = mycolor.sphere()
+    #     xs = mycolor.intersect(s,r)
+
+    #     self.assertEqual(len(xs), 0)
+
+    # def test_intersect_inside(self):
+    #     mycolor.ray(mytuple.Point(0,0,0), mytuple.Vector(0,0,1))
+    #     s = mycolor.sphere()
+    #     xs = mycolor.intersect(s,r)
+
+    #     self.assertEqual(len(xs), 2)
+    #     self.assertEqual(xs[0],-1.0)
+    #     self.assertEqual(xs[1], 1.0)
+
+    # def test_intersect_behind(self):
+    #     mycolor.ray(mytuple.Point(0,0,5), mytuple.Vector(0,0,1))
+    #     s = mycolor.sphere()
+    #     xs = mycolor.intersect(s,r)
+
+    #     self.assertEqual(len(xs), 2)
+    #     self.assertEqual(xs[0], -6.0)
+    #     self.assertEqual(xs[1], -4.0)
+
+    
