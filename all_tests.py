@@ -656,3 +656,49 @@ class RayTest(unittest.TestCase):
         i = mytuple.hit(xs)
 
         self.assertEqual(i, None)
+
+    def test_hitmultiple(self):
+        s = mytuple.sphere()
+        i1 = mytuple.intersection(5, s)
+        i2 = mytuple.intersection(7, s)
+        i3 = mytuple.intersection(-3, s)
+        i4 = mytuple.intersection(2, s)
+        xs = mytuple.intersections(i1,i2,i3,i4)
+
+        self.assertEqual(mytuple.hit(xs), i4)
+
+    def test_raytransform(self):
+        r = mytuple.ray(mytuple.Point(1,2,3), mytuple.Vector(0,1,0))
+        m = mytuple.Matrix.translation(3,4,5)
+        r2 = r.transform(m)
+
+        self.assertEqual(r2.origin,    mytuple.Point(4,6,8))
+        self.assertEqual(r2.direction, mytuple.Vector(0,1,0))
+
+        m = mytuple.Matrix.scaling(2,3,4)
+        r2 = r.transform(m)
+
+        self.assertEqual(r2.origin,    mytuple.Point(2,6,12))
+        self.assertEqual(r2.direction, mytuple.Vector(0,3,0))
+
+    def test_spheretransform(self):
+        s = mytuple.sphere()
+        assert(mytuple.Matrix.equal(s.transform, mytuple.Matrix.Id()))
+
+        t= mytuple.Matrix.translation(2,3,4)
+        s.settransform(t)
+        assert(t.equal(s.transform))
+
+    def test_inters_transformedray(self):
+        s = mytuple.sphere()
+        r = mytuple.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
+
+        s.settransform(mytuple.Matrix.scaling(2,2,2)) # scaled sphere
+        xs = r.inters(s)
+        self.assertEqual(len(xs), 2)
+        self.assertEqual(xs[0].t, 3)
+        self.assertEqual(xs[1].t, 7)
+
+        s.settransform(mytuple.Matrix.translation(5,0,0)) # translated sphere
+        xs = r.inters(s)
+        self.assertEqual(len(xs), 0)

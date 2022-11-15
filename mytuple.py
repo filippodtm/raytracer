@@ -310,9 +310,11 @@ class Matrix:
 
 class sphere:
     def __init__(self):
-        pass
-# s = sphere()
-# print(s)
+        self.transform = Matrix.Id()
+    def settransform(self, m: Matrix):
+        self.transform = m
+    
+s = sphere()
 
 class intersection:
     def __init__(self, t, obj):
@@ -322,7 +324,18 @@ class intersection:
 def intersections(*names): #inutile?
     return names
 
-#def hit(
+def hit(args: tuple):
+    """returns intersection with lowest non negative t, if it exists"""
+    new = [i for i in args if i.t>0]
+    if new:
+        new.sort(key=lambda x: x.t)
+        return new[0]
+
+# i1 = intersection(100, s)
+# i2 = intersection(1, s)
+# xs = intersections(i2,i1)
+# print(hit(xs))
+# print(i2)
 
 
 class ray:
@@ -337,13 +350,15 @@ class ray:
         return self.origin+ t* self.direction
 
     def inters(self, s: sphere):
+        """compute ray-sphere intersections, with possible transformations"""
+        ray2 = self.transform(s.transform.inverse())
         # vector center of sphere --> ray.origin
-        v = self.origin - Point(0,0,0)
+        v = ray2.origin - Point(0,0,0)
         
         # look for t sol. of: ||v + t*dir||^2 = 1
         # ie:      |dir|^ t^ + 2<dir,v> t + |v|^ = 1
-        a = MyTuple.dot(self.direction,self.direction)
-        b = 2* MyTuple.dot(self.direction, v)
+        a = MyTuple.dot(ray2.direction,ray2.direction)
+        b = 2* MyTuple.dot(ray2.direction, v)
         c = MyTuple.dot(v,v) -1
         delta = b**2 -4*a*c
         if delta<0:
@@ -353,8 +368,7 @@ class ray:
             t2 = (-b+math.sqrt(delta)) /(2*a)
             return intersections(intersection(t1, s), intersection(t2,s))
 
-
-    
-
-
-
+    def transform(self, matr: Matrix):
+        o = matr* self.origin
+        d = matr* self.direction
+        return ray(o,d)

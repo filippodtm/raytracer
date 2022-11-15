@@ -7,9 +7,9 @@ x0 = Point(0,1,0)
 v0 = Vector(1,1.8,0).normalize() * 11.25
 g= Vector(0,-0.1,0)
 wind = Vector(-0.02 ,0,0)
+# drawtrajectory(g, wind, x0, v0, 900, 550, "traiettoria1.ppm")
 
-#drawtrajectory(g, wind, x0, v0, 900, 550, "traiettoria1.ppm")
-drawclockwise(canvaswidth =550, canvasheight= 550, filename='orologio1.ppm')
+# drawclockwise(canvaswidth =550, canvasheight= 550, filename='orologio1.ppm')
 
 
 
@@ -33,5 +33,3 @@ def drawclockwise(canvaswidth, canvasheight, filename='orologio1.ppm'):
         canvas.writepixel( xi,yi, Color(1,1,0))
 
     canvastoppm(canvas, filename)
-
-
