@@ -4,12 +4,11 @@ from mycolor import *
 
 
 rayorigin= Point(0,0,-5)
-wallz = 10
-wallsize= 7
+zwall = 10
+wallsize= 20
 npixels= 100
-# nomeppm?
 
-def castshadow(rayorigin, wallz, wallsize, npixels, color=Color(1,0,0), shape=sphere()):
+def castshadow(rayorigin, zwall, wallsize, npixels, shape, color=Color(1,0,0), filename= 'shadow.ppm'):
     """cast a shadow of the shape on a canvas"""
 
     pixelsize= wallsize/npixels #size of one pixel
@@ -20,10 +19,19 @@ def castshadow(rayorigin, wallz, wallsize, npixels, color=Color(1,0,0), shape=sp
 
         for i in range(npixels):
             x= -half + pixelsize*i #left x=-half, right x=half
-            target = Point(x, y, wallz)
-            r= ray(rayorigin, Vector.normalize(target-rayorigin)) #one ray to every pixel
 
+            target = Point(x, y, zwall)
+            r= ray(rayorigin, Vector.normalize(target-rayorigin)) #one ray to every pixel
+            
             a = r.inters(shape)
             if hit(a):
                 canvas.writepixel(i,j, color)
-    
+    canvastoppm(canvas, filename)
+
+
+
+shape = sphere()
+
+shape.transform = Matrix.zrotation(math.pi /4)* Matrix.scaling(1, 0.2, 1)  * Matrix.zrotation(math.pi /4)
+print(shape, shape.transform)
+castshadow(rayorigin, zwall, wallsize, npixels, shape, Color(1,0,0), filename= 'shadow.ppm')

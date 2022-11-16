@@ -702,3 +702,53 @@ class RayTest(unittest.TestCase):
         s.settransform(mytuple.Matrix.translation(5,0,0)) # translated sphere
         xs = r.inters(s)
         self.assertEqual(len(xs), 0)
+
+
+class TestShading(unittest.TestCase):
+
+    def test_normal(self):
+        s = mytuple.sphere()
+        n = s.normal(mytuple.Point(1,0,0))
+        self.assertEqual(n, mytuple.Vector(1,0,0))
+
+        n = s.normal(mytuple.Point(0,1,0))
+        self.assertEqual(n, mytuple.Vector(0,1,0))
+
+        n = s.normal(mytuple.Point(0,0,1))
+        self.assertEqual(n, mytuple.Vector(0,0,1))
+
+        n = s.normal(mytuple.Point(math.sqrt(3)/3, math.sqrt(3)/3, math.sqrt(3)/3 ))
+        self.assertEqual(n, mytuple.Vector(math.sqrt(3)/3, math.sqrt(3)/3, math.sqrt(3)/3))
+
+    def test_normalnorm(self):
+        s = mytuple.sphere()
+        p = mytuple.Point(math.sqrt(3)/3, math.sqrt(3)/3, math.sqrt(3)/3 )
+        n= s.normal( p)
+
+        self.assertEqual(n, n.normalize())
+
+    def test_transformednormal(self):
+        s= mytuple.sphere()
+        s.settransform(mytuple.Matrix.translation(0,1,0))
+        n = s.normal(mytuple.Point(0, 1.70711, -0.70711))
+
+        self.assertEqual(n.round(), mytuple.Vector(0, 0.70711, -0.70711))
+
+        #s = mytuple.sphere()
+        m = mytuple.Matrix.scaling(1, .5, 1) * mytuple.Matrix.zrotation(math.pi /5)
+        s.settransform(m)
+        n = s.normal(mytuple.Point(0, math.sqrt(2)/2, -math.sqrt(2)/2))
+
+        self.assertEqual(n.round(), mytuple.Vector(0, .97014, -0.24254))
+
+    def test_reflection(self):
+        v = mytuple.Vector(1,-1,0)
+        n = mytuple.Vector(0,1,0)
+        r = v.reflect(n)
+        self.assertEqual(r, mytuple.Vector(1,1,0))
+
+        v = mytuple.Vector(0,-1,0)
+        n = mytuple.Vector(math.sqrt(2) /2, math.sqrt(2) /2, 0)
+        r = v.reflect(n)
+        self.assertEqual(r, mytuple.Vector(1,0,0))
+        

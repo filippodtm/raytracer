@@ -17,10 +17,17 @@ class MyTuple:
     #     self.__class__ = Point
     # elif self.is_vector():
     #     self.__class__ = Vector
-        
+
+    def to_vector(self):
+        if self.is_vector():
+            return Vector(self.x, self.y, self.z)
+    
     def __repr__(self):
         return f"MyTuple({self.x}, {self.y}, {self.z}, {self.w})"
 
+    def round(self): #occhio non ho arrotondato w
+        return create_tuple(round(self.x, ndigits=5), round(self.y, 5), round(self.z, 5), self.w)
+    
     def __eq__(self, other):
         return math.isclose(self.x,other.x,
                             abs_tol=1e-14) and math.isclose(self.y,
@@ -29,29 +36,28 @@ class MyTuple:
                                                                          abs_tol=1e-14)
     
     def __add__(self, other):
-        return MyTuple(self.x+ other.x, self.y + other.y,
+        return create_tuple(self.x+ other.x, self.y + other.y,
                        self.z+ other.z, self.w + other.w)
     def __sub__(self, other):
-        return MyTuple(self.x- other.x, self.y - other.y,
+        return create_tuple(self.x- other.x, self.y - other.y,
                        self.z- other.z, self.w - other.w)
     def __neg__(self):
-        return MyTuple(0,0,0,0) -self
+        return create_tuple(0,0,0,0) -self
 
     
     def __mul__(self, c):
-        return MyTuple(self.x *c, self.y*c, self.z*c, self.w*c)
+        return create_tuple(self.x *c, self.y*c, self.z*c, self.w*c)
     __rmul__= __mul__
 
     def __truediv__(self, scalar):
-        return MyTuple(self.x/scalar, self.y/scalar, self.z/scalar,
+        return create_tuple(self.x/scalar, self.y/scalar, self.z/scalar,
                        self.w/scalar)
     def __floordiv__(self, scalar):
-        return MyTuple(self.x/scalar, self.y/scalar, self.z/scalar,
+        return create_tuple(self.x/scalar, self.y/scalar, self.z/scalar,
                        self.w/scalar)
 
     def dot(self, other):
         return self.x *other.x + self.y *other.y +self.z *other.z + self.w *other.w
-
     
 
     
@@ -87,11 +93,23 @@ class Vector(MyTuple):
         return Vector(self.y*b.z - self.z*b.y,
                       self.z*b.x - self.x*b.z,
                       self.x*b.y - self.y*b.x)
+
+    def reflect(self, normal):
+        return self - 2*normal*self.dot(normal)
+
+
+
+def create_tuple(x, y, z, w):
+    if w==0:
+        return Vector(x,y,z)
+    elif w==1:
+        return Point(x,y,z)
+    else:
+        return MyTuple(x,y,z,w)
+
+
+
     
-
-
-
-
 class Projectile:
     def __init__(self, position: Point, velocity: Vector):
 
@@ -238,15 +256,15 @@ class Matrix:
         
         elif other.__class__ in (MyTuple, Point,Vector):
             x,y,z,w = self[0,:]
-            a = MyTuple.dot(MyTuple(x,y,z,w), other)
+            a = MyTuple.dot(create_tuple(x,y,z,w), other)
             x,y,z,w = self[1,:]
-            b = MyTuple.dot(MyTuple(x,y,z,w), other)
+            b = MyTuple.dot(create_tuple(x,y,z,w), other)
             x,y,z,w = self[2,:]
-            c = MyTuple.dot(MyTuple(x,y,z,w), other)
+            c = MyTuple.dot(create_tuple(x,y,z,w), other)
             x,y,z,w = self[3,:]
-            d = MyTuple.dot(MyTuple(x,y,z,w), other)
+            d = MyTuple.dot(create_tuple(x,y,z,w), other)
             
-            return MyTuple(a,b,c,d)
+            return create_tuple(a,b,c,d)
 
     def transpose(self):
         return Matrix([[self[i,j] for i in range(self.mrows)]
@@ -313,8 +331,18 @@ class sphere:
         self.transform = Matrix.Id()
     def settransform(self, m: Matrix):
         self.transform = m
+    def normal(self, p: Point):
+        p_wrtobj = self.transform.inverse() * p
+        n_wrtobj = p_wrtobj - Point(0,0,0)
+        n = self.transform.inverse().transpose() * n_wrtobj
+
+        n.w = 0   #serve se ho traslazioni
+        return Vector.normalize(n.to_vector())
+    
+    
     
 s = sphere()
+
 
 class intersection:
     def __init__(self, t, obj):
