@@ -13,6 +13,22 @@ wind = Vector(-0.02 ,0,0)
 
 
 
+def drawtrajectory(g, wind, x0, v0, canvaswidth, canvasheight, filename):
+    canvas = Canvas(canvaswidth, canvasheight)
+    trajectory = mytuple.trajectory(g, wind, x0, v0)
+    for elem in trajectory:  # elem is Projectile(position,velocity)
+        xi = round(elem.position.x)
+        yi = canvasheight- round(elem.position.y)
+        canvas.writepixel( xi,yi, Color(1,1,0))
+
+    canvastoppm(canvas, filename)
+
+
+
+
+
+
+
 
 def clock(radius=1):
     l = []

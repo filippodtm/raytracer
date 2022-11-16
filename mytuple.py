@@ -326,77 +326,71 @@ class Matrix:
 
 
 
-class sphere:
-    def __init__(self):
-        self.transform = Matrix.Id()
-    def settransform(self, m: Matrix):
-        self.transform = m
-    def normal(self, p: Point):
-        p_wrtobj = self.transform.inverse() * p
-        n_wrtobj = p_wrtobj - Point(0,0,0)
-        n = self.transform.inverse().transpose() * n_wrtobj
-
-        n.w = 0   #serve se ho traslazioni
-        return Vector.normalize(n.to_vector())
-    
-    
-    
-s = sphere()
-
-
-class intersection:
-    def __init__(self, t, obj):
-        self.t = t
-        self.obj = obj
-
-def intersections(*names): #inutile?
-    return names
-
-def hit(args: tuple):
-    """returns intersection with lowest non negative t, if it exists"""
-    new = [i for i in args if i.t>0]
-    if new:
-        new.sort(key=lambda x: x.t)
-        return new[0]
-
-# i1 = intersection(100, s)
-# i2 = intersection(1, s)
-# xs = intersections(i2,i1)
-# print(hit(xs))
-# print(i2)
-
-
-class ray:
-    def __init__(self, origin: Point, direction: Vector):
-        self.origin= origin
-        self.direction = direction
+# class sphere:
+#     def __init__(self):
+#         self.transform = Matrix.Id()
+#         self.material  = mycolor.Material() #serve mycolor
         
-    def __repr__(self):
-        return f"Ray({self.origin}, {self.direction}) "
+#     def settransform(self, m: Matrix):
+#         self.transform = m
+#     def normal(self, p: Point):
+#         p_wrtobj = self.transform.inverse() * p
+#         n_wrtobj = p_wrtobj - Point(0,0,0)
+#         n = self.transform.inverse().transpose() * n_wrtobj
 
-    def position(self, t):
-        return self.origin+ t* self.direction
+#         n.w = 0   #serve se ho traslazioni
+#         return Vector.normalize(n.to_vector())
 
-    def inters(self, s: sphere):
-        """compute ray-sphere intersections, with possible transformations"""
-        ray2 = self.transform(s.transform.inverse())
-        # vector center of sphere --> ray.origin
-        v = ray2.origin - Point(0,0,0)
+
+    
+# class intersection:
+#     def __init__(self, t, obj):
+#         self.t = t
+#         self.obj = obj
+
+# def intersections(*names): #inutile?
+#     return names
+
+# def hit(args: tuple):
+#     """returns intersection with lowest non negative t, if it exists"""
+#     new = [i for i in args if i.t>0]
+#     if new:
+#         new.sort(key=lambda x: x.t)
+#         return new[0]
+
+    
+
+# class ray:
+#     def __init__(self, origin: Point, direction: Vector):
+#         self.origin= origin
+#         self.direction = direction
         
-        # look for t sol. of: ||v + t*dir||^2 = 1
-        # ie:      |dir|^ t^ + 2<dir,v> t + |v|^ = 1
-        a = MyTuple.dot(ray2.direction,ray2.direction)
-        b = 2* MyTuple.dot(ray2.direction, v)
-        c = MyTuple.dot(v,v) -1
-        delta = b**2 -4*a*c
-        if delta<0:
-            return ()
-        else:
-            t1 = (-b-math.sqrt(delta)) /(2*a)
-            t2 = (-b+math.sqrt(delta)) /(2*a)
-            return intersections(intersection(t1, s), intersection(t2,s))
+#     def __repr__(self):
+#         return f"Ray({self.origin}, {self.direction}) "
 
-    def transform(self, matr: Matrix):
-        o = matr* self.origin
-        d = matr* self.direction
-        return ray(o,d)
+#     def position(self, t):
+#         return self.origin+ t* self.direction
+
+#     def inters(self, s: sphere):
+#         """compute ray-sphere intersections, with possible transformations"""
+#         ray2 = self.transform(s.transform.inverse())
+#         # vector center of sphere --> ray.origin
+#         v = ray2.origin - Point(0,0,0)
+        
+#         # look for t sol. of: ||v + t*dir||^2 = 1
+#         # ie:      |dir|^ t^ + 2<dir,v> t + |v|^ = 1
+#         a = MyTuple.dot(ray2.direction,ray2.direction)
+#         b = 2* MyTuple.dot(ray2.direction, v)
+#         c = MyTuple.dot(v,v) -1
+#         delta = b**2 -4*a*c
+#         if delta<0:
+#             return ()
+#         else:
+#             t1 = (-b-math.sqrt(delta)) /(2*a)
+#             t2 = (-b+math.sqrt(delta)) /(2*a)
+#             return intersections(intersection(t1, s), intersection(t2,s))
+
+#     def transform(self, matr: Matrix):
+#         o = matr* self.origin
+#         d = matr* self.direction
+#         return ray(o,d)

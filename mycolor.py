@@ -1,5 +1,5 @@
 import math
-import mytuple  #per trajectory()
+import mytuple  #per trajectory(), ray sphere ecc
 
 
 class Color:
@@ -84,22 +84,96 @@ def canvastoppm(canvas: Canvas, filename: str):
                     ppmfile.write(i+" ")
                 
             ppmfile.write("\n")
+
+
+
+
+
+
+
+
+
+
+class pointlight:
+    def __init__(self, pos: mytuple.Point, intens: Color):
+        self.position= pos
+        self.intensity = intens
+    
+
+class Material:
+    def __init__(self,color= Color(1,1,1), ambient=.1, diffuse=.9, specular=.9, shininess=200):
+        self.color= color
+        self.ambient = ambient
+        self.diffuse = diffuse
+        self.specular = specular
+        self.shininess = shininess
+
+##############################################
+class sphere:
+    def __init__(self):
+        self.transform = mytuple.Matrix.Id()
+        self.material  = Material()
         
+    def settransform(self, m: mytuple.Matrix):
+        self.transform = m
+    def normal(self, p: mytuple.Point):
+        p_wrtobj = self.transform.inverse() * p
+        n_wrtobj = p_wrtobj - mytuple.Point(0,0,0)
+        n = self.transform.inverse().transpose() * n_wrtobj
 
-def drawtrajectory(g, wind, x0, v0, canvaswidth, canvasheight, filename):
-    canvas = Canvas(canvaswidth, canvasheight)
-    trajectory = mytuple.trajectory(g, wind, x0, v0)
-    for elem in trajectory:  # elem is Projectile(position,velocity)
-        xi = round(elem.position.x)
-        yi = canvasheight- round(elem.position.y)
-        canvas.writepixel( xi,yi, Color(1,1,0))
-
-    canvastoppm(canvas, filename)
-
-
+        n.w = 0   #serve se ho traslazioni
+        return mytuple.Vector.normalize(n.to_vector())
+       
 
 
+class intersection:
+    def __init__(self, t, obj):
+        self.t = t
+        self.obj = obj
 
+def intersections(*names): #inutile?
+    return names
 
+def hit(args: tuple):
+    """returns intersection with lowest non negative t, if it exists"""
+    new = [i for i in args if i.t>0]
+    if new:
+        new.sort(key=lambda x: x.t)
+        return new[0]
 
+    
 
+class ray:
+    def __init__(self, origin: mytuple.Point, direction: mytuple.Vector):
+        self.origin= origin
+        self.direction = direction
+        
+    def __repr__(self):
+        return f"Ray({self.origin}, {self.direction}) "
+
+    def position(self, t):
+        return self.origin+ t* self.direction
+
+    def inters(self, s: sphere):
+        """compute ray-sphere intersections, with possible transformations"""
+        ray2 = self.transform(s.transform.inverse())
+        # vector center of sphere --> ray.origin
+        v = ray2.origin - mytuple.Point(0,0,0)
+        
+        # look for t sol. of: ||v + t*dir||^2 = 1
+        # ie:      |dir|^ t^ + 2<dir,v> t + |v|^ = 1
+        a = mytuple.MyTuple.dot(ray2.direction,ray2.direction)
+        b = 2* mytuple.MyTuple.dot(ray2.direction, v)
+        c = mytuple.MyTuple.dot(v,v) -1
+        delta = b**2 -4*a*c
+        if delta<0:
+            return ()
+        else:
+            t1 = (-b-math.sqrt(delta)) /(2*a)
+            t2 = (-b+math.sqrt(delta)) /(2*a)
+            return intersections(intersection(t1, s), intersection(t2,s))
+
+    def transform(self, matr: mytuple.Matrix):
+        o = matr* self.origin
+        d = matr* self.direction
+        return ray(o,d)

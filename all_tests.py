@@ -545,13 +545,13 @@ class RayTest(unittest.TestCase):
     def test_createray(self):
         origin = mytuple.Point(1,2,3)
         direction = mytuple.Vector(4,5,6)
-        r = mytuple.ray(origin,direction)
+        r = mycolor.ray(origin,direction)
 
         self.assertEqual(r.origin, origin)
         self.assertEqual(r.direction, direction)
 
     def test_computepoint(self):
-        r = mytuple.ray(mytuple.Point(2,3,4), mytuple.Vector(1,0,0))
+        r = mycolor.ray(mytuple.Point(2,3,4), mytuple.Vector(1,0,0))
 
         self.assertEqual(r.position(0),  mytuple.Point(2, 3, 4))
         self.assertEqual(r.position(1),  mytuple.Point(3, 3, 4))
@@ -560,8 +560,8 @@ class RayTest(unittest.TestCase):
 
         
     def test_inters2points(self):
-        r = mytuple.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
-        s = mytuple.sphere()
+        r = mycolor.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
+        s = mycolor.sphere()
         xs = r.inters(s)
 
         self.assertEqual(len(xs), 2)
@@ -569,8 +569,8 @@ class RayTest(unittest.TestCase):
         self.assertEqual(xs[1].t, 6.0)
 
     def test_inters1tangent(self):
-        r = mytuple.ray(mytuple.Point(0,1,-5), mytuple.Vector(0,0,1))
-        s = mytuple.sphere()
+        r = mycolor.ray(mytuple.Point(0,1,-5), mytuple.Vector(0,0,1))
+        s = mycolor.sphere()
         xs = r.inters(s)
 
         self.assertEqual(len(xs), 2)
@@ -578,15 +578,15 @@ class RayTest(unittest.TestCase):
         self.assertEqual(xs[1].t, 5.0)
 
     def test_inters0(self):
-        r = mytuple.ray(mytuple.Point(0,2,-5), mytuple.Vector(0,0,1))
-        s = mytuple.sphere()
+        r = mycolor.ray(mytuple.Point(0,2,-5), mytuple.Vector(0,0,1))
+        s = mycolor.sphere()
         xs = r.inters(s)
 
         self.assertEqual(len(xs), 0)
 
     def test_inters_inside(self):
-        r = mytuple.ray(mytuple.Point(0,0,0), mytuple.Vector(0,0,1))
-        s = mytuple.sphere()
+        r = mycolor.ray(mytuple.Point(0,0,0), mytuple.Vector(0,0,1))
+        s = mycolor.sphere()
         xs = r.inters(s)
 
         self.assertEqual(len(xs), 2)
@@ -594,8 +594,8 @@ class RayTest(unittest.TestCase):
         self.assertEqual(xs[1].t, 1.0)
 
     def test_inters_behind(self):
-        r = mytuple.ray(mytuple.Point(0,0,5), mytuple.Vector(0,0,1))
-        s = mytuple.sphere()
+        r = mycolor.ray(mytuple.Point(0,0,5), mytuple.Vector(0,0,1))
+        s = mycolor.sphere()
         xs = r.inters(s)
 
         self.assertEqual(len(xs), 2)
@@ -604,25 +604,25 @@ class RayTest(unittest.TestCase):
 
         
     def test_intersection(self):
-        s = mytuple.sphere()
+        s = mycolor.sphere()
         
-        i = mytuple.intersection(3.5, s)
+        i = mycolor.intersection(3.5, s)
         self.assertEqual(i.t, 3.5)
         self.assertEqual(i.obj, s)
 
     def test_aggregateintersections(self):
-        s = mytuple.sphere()
-        i1 = mytuple.intersection(1, s)
-        i2 = mytuple.intersection(2, s)
-        xs = mytuple.intersections(i1,i2) #no sense?
+        s = mycolor.sphere()
+        i1 = mycolor.intersection(1, s)
+        i2 = mycolor.intersection(2, s)
+        xs = mycolor.intersections(i1,i2) #no sense?
 
         self.assertEqual(len(xs), 2)
         self.assertEqual(xs[0].t , 1)
         self.assertEqual(xs[1].t , 2)
 
     def test_inters_setobj(self):
-        r = mytuple.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
-        s = mytuple.sphere()
+        r = mycolor.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
+        s = mycolor.sphere()
         xs = r.inters(s)
 
         self.assertEqual(len(xs), 2)
@@ -631,44 +631,44 @@ class RayTest(unittest.TestCase):
 
         
     def test_hit_positive(self):
-        s = mytuple.sphere()
-        i1 = mytuple.intersection(1, s)
-        i2 = mytuple.intersection(2, s)
-        xs = mytuple.intersections(i2,i1)
-        i = mytuple.hit(xs)
+        s = mycolor.sphere()
+        i1 = mycolor.intersection(1, s)
+        i2 = mycolor.intersection(2, s)
+        xs = mycolor.intersections(i2,i1)
+        i = mycolor.hit(xs)
 
         self.assertEqual(i, i1)
 
     def test_hit1pos1neg(self):
-        s = mytuple.sphere()
-        i1 = mytuple.intersection(-1, s)
-        i2 = mytuple.intersection(1, s)
-        xs = mytuple.intersections(i2,i1)
-        i = mytuple.hit(xs)
+        s = mycolor.sphere()
+        i1 = mycolor.intersection(-1, s)
+        i2 = mycolor.intersection(1, s)
+        xs = mycolor.intersections(i2,i1)
+        i = mycolor.hit(xs)
 
         self.assertEqual(i, i2)
 
     def test_hit_negative(self):
-        s = mytuple.sphere()
-        i1 = mytuple.intersection(-2, s)
-        i2 = mytuple.intersection(-1, s)
-        xs = mytuple.intersections(i2,i1)
-        i = mytuple.hit(xs)
+        s = mycolor.sphere()
+        i1 = mycolor.intersection(-2, s)
+        i2 = mycolor.intersection(-1, s)
+        xs = mycolor.intersections(i2,i1)
+        i = mycolor.hit(xs)
 
         self.assertEqual(i, None)
 
     def test_hitmultiple(self):
-        s = mytuple.sphere()
-        i1 = mytuple.intersection(5, s)
-        i2 = mytuple.intersection(7, s)
-        i3 = mytuple.intersection(-3, s)
-        i4 = mytuple.intersection(2, s)
-        xs = mytuple.intersections(i1,i2,i3,i4)
+        s = mycolor.sphere()
+        i1 = mycolor.intersection(5, s)
+        i2 = mycolor.intersection(7, s)
+        i3 = mycolor.intersection(-3, s)
+        i4 = mycolor.intersection(2, s)
+        xs = mycolor.intersections(i1,i2,i3,i4)
 
-        self.assertEqual(mytuple.hit(xs), i4)
+        self.assertEqual(mycolor.hit(xs), i4)
 
     def test_raytransform(self):
-        r = mytuple.ray(mytuple.Point(1,2,3), mytuple.Vector(0,1,0))
+        r = mycolor.ray(mytuple.Point(1,2,3), mytuple.Vector(0,1,0))
         m = mytuple.Matrix.translation(3,4,5)
         r2 = r.transform(m)
 
@@ -682,7 +682,7 @@ class RayTest(unittest.TestCase):
         self.assertEqual(r2.direction, mytuple.Vector(0,3,0))
 
     def test_spheretransform(self):
-        s = mytuple.sphere()
+        s = mycolor.sphere()
         assert(mytuple.Matrix.equal(s.transform, mytuple.Matrix.Id()))
 
         t= mytuple.Matrix.translation(2,3,4)
@@ -690,8 +690,8 @@ class RayTest(unittest.TestCase):
         assert(t.equal(s.transform))
 
     def test_inters_transformedray(self):
-        s = mytuple.sphere()
-        r = mytuple.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
+        s = mycolor.sphere()
+        r = mycolor.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
 
         s.settransform(mytuple.Matrix.scaling(2,2,2)) # scaled sphere
         xs = r.inters(s)
@@ -707,7 +707,7 @@ class RayTest(unittest.TestCase):
 class TestShading(unittest.TestCase):
 
     def test_normal(self):
-        s = mytuple.sphere()
+        s = mycolor.sphere()
         n = s.normal(mytuple.Point(1,0,0))
         self.assertEqual(n, mytuple.Vector(1,0,0))
 
@@ -721,20 +721,20 @@ class TestShading(unittest.TestCase):
         self.assertEqual(n, mytuple.Vector(math.sqrt(3)/3, math.sqrt(3)/3, math.sqrt(3)/3))
 
     def test_normalnorm(self):
-        s = mytuple.sphere()
+        s = mycolor.sphere()
         p = mytuple.Point(math.sqrt(3)/3, math.sqrt(3)/3, math.sqrt(3)/3 )
         n= s.normal( p)
 
         self.assertEqual(n, n.normalize())
 
     def test_transformednormal(self):
-        s= mytuple.sphere()
+        s= mycolor.sphere()
         s.settransform(mytuple.Matrix.translation(0,1,0))
         n = s.normal(mytuple.Point(0, 1.70711, -0.70711))
 
         self.assertEqual(n.round(), mytuple.Vector(0, 0.70711, -0.70711))
 
-        #s = mytuple.sphere()
+        #s = mycolor.sphere()
         m = mytuple.Matrix.scaling(1, .5, 1) * mytuple.Matrix.zrotation(math.pi /5)
         s.settransform(m)
         n = s.normal(mytuple.Point(0, math.sqrt(2)/2, -math.sqrt(2)/2))
@@ -751,4 +751,29 @@ class TestShading(unittest.TestCase):
         n = mytuple.Vector(math.sqrt(2) /2, math.sqrt(2) /2, 0)
         r = v.reflect(n)
         self.assertEqual(r, mytuple.Vector(1,0,0))
-        
+
+    def test_pointlight(self):
+        intensity= mycolor.Color(1,1,1)
+        position = mytuple.Point(0,0,0)
+        l = mycolor.pointlight(position,intensity)
+
+        self.assertEqual(l.position, position)
+        self.assertEqual(l.intensity, intensity)
+
+    def test_material(self):
+        m = mycolor.Material()
+
+        self.assertEqual(m.color, mycolor.Color(1,1,1))
+        self.assertEqual(m.ambient, .1)
+        self.assertEqual(m.diffuse, .9)
+        self.assertEqual(m.specular, .9)
+        self.assertEqual(m.shininess, 200.0)
+
+    def test_spherematerial(self):
+        s = mycolor.sphere()
+        self.assertEqual(s.material, mycolor.Material())
+
+        m = mycolor.Material()
+        m.ambient = 1
+        s.material = m
+        self.assertEqual(s.material, m)
