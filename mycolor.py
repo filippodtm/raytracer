@@ -126,12 +126,12 @@ class intersection:
 def intersections(*names): #inutile?
     return names
 
-def hit(args: tuple):
-    """returns intersection with lowest non negative t, if it exists"""
-    new = [i for i in args if i.t>0]
-    if new:
-        new.sort(key=lambda x: x.t)
-        return new[0]
+def hit(intersezioni: tuple):
+    """returns the intersection with lowest non negative t, if it exists"""
+    lista = [x for x in intersezioni if x.t>0]
+    if lista:
+        lista.sort(key=lambda x: x.t)
+        return lista[0]
 
     
 
