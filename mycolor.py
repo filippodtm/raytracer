@@ -15,8 +15,10 @@ class Color:
     def __eq__(self, other):
         return math.isclose(self.red, other.red) and math.isclose(self.green,
                                     other.green) and math.isclose(self.blue, other.blue)
-
-    # adding, subtracting colors
+    def round5(self):
+        return Color(round(self.red, 5), round(self.green, 5), round(self.blue, 5))
+    
+    # adding, subtracting
     def __add__(self, other):
         return Color(self.red + other.red, self.green + other.green,
                        self.blue + other.blue)
@@ -24,7 +26,7 @@ class Color:
         return Color(self.red - other.red, self.green - other.green,
                        self.blue - other.blue)
     def __neg__(self):
-        return Color(0,0,0,0) -self
+        return Color(0,0,0) -self
     
 
     # multiplying and dividing by scalars
@@ -43,6 +45,9 @@ class Color:
     def hadamardprod(self, other):
         return Color(self.red *other.red, self.green *other.green, self.blue *other.blue)
 
+    @staticmethod
+    def black():
+        return Color(0,0,0)
     
 
 
@@ -94,21 +99,8 @@ def canvastoppm(canvas: Canvas, filename: str):
 
 
 
-class pointlight:
-    def __init__(self, pos: mytuple.Point, intens: Color):
-        self.position= pos
-        self.intensity = intens
-    
 
-class Material:
-    def __init__(self,color= Color(1,1,1), ambient=.1, diffuse=.9, specular=.9, shininess=200):
-        self.color= color
-        self.ambient = ambient
-        self.diffuse = diffuse
-        self.specular = specular
-        self.shininess = shininess
 
-##############################################
 class sphere:
     def __init__(self):
         self.transform = mytuple.Matrix.Id()
@@ -177,3 +169,54 @@ class ray:
         o = matr* self.origin
         d = matr* self.direction
         return ray(o,d)
+
+
+
+#
+class pointlight:
+    def __init__(self, pos: mytuple.Point, intens: Color):
+        self.position= pos
+        self.intensity = intens
+    
+
+class Material:
+    def __init__(self,color= Color(1,1,1), ambient=.1, diffuse=.9, specular=.9, shininess=200):
+        self.color= color
+        self.ambient = ambient
+        self.diffuse = diffuse
+        self.specular = specular
+        self.shininess = shininess
+
+    def equal(self, other):
+        return self.color==other.color and math.isclose(self.ambient,
+                        other.ambient) and math.isclose(self.diffuse,
+                        other.diffuse) and math.isclose(self.specular,
+                       other.specular) and math.isclose(self.shininess,other.shininess)       
+
+
+
+
+def lighting(material: Material,
+             l:        pointlight,
+             point:    mytuple.Point,
+             eye:      mytuple.Vector,
+             normal:   mytuple.Vector):
+    
+    sourcev = mytuple.Vector.normalize(l.position - point)
+    ambient = l.intensity * material.color * material.ambient
+
+    sourcedotnormal = sourcev.dot(normal)
+    if sourcedotnormal < 0:
+        #light source is on the other side
+        diffuse = Color.black()
+        specular = Color.black()
+    else:
+        diffuse = l.intensity * material.color *material.diffuse *  sourcedotnormal
+
+        reflected = -sourcev.reflect(normal)
+        if reflected.dot(eye) <=0:
+            specular = Color.black()
+        else:
+            k = reflected.dot(eye)**material.shininess
+            specular = l.intensity * material.specular * k
+    return ambient + diffuse + specular

@@ -771,9 +771,68 @@ class TestShading(unittest.TestCase):
 
     def test_spherematerial(self):
         s = mycolor.sphere()
-        self.assertEqual(s.material, mycolor.Material())
+        self.assertTrue( s.material.equal(mycolor.Material() ))
+        # è quello default, non sono lo stesso oggetto
 
         m = mycolor.Material()
         m.ambient = 1
         s.material = m
-        self.assertEqual(s.material, m)
+        self.assertEqual(s.material, m)  #here it works (bruh)
+
+    #LIGHTING
+
+    def test_lighting1front(self):
+        m = mycolor.Material()
+        position = mytuple.Point(0,0,0)
+        
+        eye = mytuple.Vector(0,0,-1)
+        normal = mytuple.Vector(0,0,-1)
+        light = mycolor.pointlight(mytuple.Point(0,0,-10), mycolor.Color(1,1,1))
+        result = mycolor.lighting(m, light, position, eye, normal)
+
+        self.assertTrue(result == mycolor.Color(1.9, 1.9, 1.9))
+
+    def test_lighting2middle(self):
+        m = mycolor.Material()
+        position = mytuple.Point(0,0,0)
+        
+        eye = mytuple.Vector(0, math.sqrt(2)/2, -math.sqrt(2)/2)
+        normal = mytuple.Vector(0,0,-1)
+        light = mycolor.pointlight(mytuple.Point(0,0,-10), mycolor.Color(1,1,1))
+        result = mycolor.lighting(m, light, position, eye, normal)
+
+        self.assertTrue(result == mycolor.Color(1, 1, 1))
+
+    def test_lighting3above(self):
+        m = mycolor.Material()
+        position = mytuple.Point(0,0,0)
+        
+        eye = mytuple.Vector(0,0,-1)
+        normal = mytuple.Vector(0,0,-1)
+        light = mycolor.pointlight(mytuple.Point(0,10,-10), mycolor.Color(1,1,1))
+        result = mycolor.lighting(m, light, position, eye, normal)
+
+        self.assertTrue(result.round5() == mycolor.Color(.7364, .7364, .7364 ))
+
+    def test_lighting4above(self):
+        m = mycolor.Material()
+        position = mytuple.Point(0,0,0)
+
+        eye = mytuple.Vector(0, -math.sqrt(2)/2, -math.sqrt(2)/2)
+        normal = mytuple.Vector(0,0,-1)
+        light = mycolor.pointlight(mytuple.Point(0,10,-10), mycolor.Color(1,1,1))
+        result = mycolor.lighting(m, light, position, eye, normal)
+        
+        self.assertTrue(result.round5() == mycolor.Color(1.6364, 1.6364, 1.6364))
+
+    def test_lighting5behind(self):
+        m = mycolor.Material()
+        position = mytuple.Point(0,0,0)
+
+        eye = mytuple.Vector(0, 0, -1)
+        normal = mytuple.Vector(0,0,-1)
+        light = mycolor.pointlight(mytuple.Point(0,0,10), mycolor.Color(1,1,1))
+        result = mycolor.lighting(m, light, position, eye, normal)
+        
+        self.assertTrue(result.round5() == mycolor.Color(.1, .1, .1))
+    
