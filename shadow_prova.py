@@ -1,7 +1,7 @@
 import math
 from mytuple import *
 from mycolor import *
-
+from myworld import *
 
 rayorigin = Point(0,0,-5)  #= osservatore
 zwall = 10
@@ -45,5 +45,6 @@ shape1.material.color = Color(1, .2, 1)
 #print(shape1.transform)
 
 luce = pointlight(Point(-8,8,-10), Color(1,1,1))
+
 
 castshadow(rayorigin,zwall,wallsize,npixels,  luce, shape1, filename= 'shadow.ppm')
