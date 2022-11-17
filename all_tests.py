@@ -882,8 +882,62 @@ class TestWorld(unittest.TestCase):
         i = myworld.intersection(4, shape)
         comps = myworld.precomps(i, r)
         
-        self.assertEqual(comps.t, i.t)
-        self.assertEqual(comps.obj, i.obj)
-        self.assertEqual(comps.point, 
-        self.assertEqual(comps.eyev,
-        self.assertEqual(comps.normal,
+        self.assertEqual(comps["t"], i.t)
+        self.assertEqual(comps["obj"], i.obj)
+        self.assertEqual(comps["point"], mytuple.Point(0,0,-1))
+        self.assertEqual(comps["eyev"], mytuple.Vector(0,0,-1))
+        self.assertEqual(comps["normal"], mytuple.Vector(0,0,-1))
+
+    def test_outsidehit(self):
+        r = myworld.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
+        shape = myworld.sphere()
+        i = myworld.intersection(4, shape)
+        comps = myworld.precomps(i, r)
+
+        self.assertFalse(comps["inside"])
+
+    def test_insidehit(self):
+        r = myworld.ray(mytuple.Point(0,0,0), mytuple.Vector(0,0,1))
+        shape = myworld.sphere()
+        i = myworld.intersection(1, shape)
+        comps = myworld.precomps(i, r)
+
+        self.assertTrue(comps["point"]== mytuple.Point(0,0,1))
+        self.assertTrue(comps["eyev"] == mytuple.Vector(0,0,-1))
+        self.assertTrue(comps["inside"])
+        self.assertTrue(comps["normal"]== mytuple.Vector(0,0,-1))
+
+    def test_shade_hit_outside(self):
+        w = myworld.World.defaultworld()
+        r = myworld.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
+        shape = w.obj[0]
+        i = myworld.intersection(4, shape)
+        comps = myworld.precomps(i, r)
+        
+        c = w.shade_hit(comps)
+        self.assertTrue(c.round5() ==mycolor.Color(0.38066, 0.47583, 0.2855))
+
+    def test_shadehit_inside(self):
+        w = myworld.World.defaultworld()
+        w.light = myworld.pointlight(mytuple.Point(0, .25, 0), mycolor.Color(1,1,1))
+        
+        r = myworld.ray(mytuple.Point(0,0,0), mytuple.Vector(0,0,1))
+        shape = w.obj[1]
+        i = myworld.intersection(.5, shape)
+        comps = myworld.precomps(i, r)
+        
+        c = w.shade_hit(comps)
+        self.assertTrue(c.round5() ==mycolor.Color(.90498, .90498, .90498))
+
+
+    def test_colorat(self):
+        w = myworld.World.defaultworld()
+
+        r = myworld.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,1,0))
+        c = w.colorat(r)
+        self.assertTrue(c ==mycolor.Color(0,0,0))
+
+        r = myworld.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,1,0))
+        c = w.colorat(r)
+        self.assertTrue(c.round5() ==mycolor.Color(0.38066, 0.47583, 0.2855))
+

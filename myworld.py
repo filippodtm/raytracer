@@ -4,6 +4,57 @@ import mycolor  # Material, light
 
 
 
+#LIGHTING #############################################
+class pointlight:
+    def __init__(self, pos: mytuple.Point, intens: mycolor.Color):
+        self.position= pos
+        self.intensity = intens
+
+    def equal(self, other):
+        return self.position==other.position and self.intensity==other.intensity
+
+class Material:
+    def __init__(self,color= mycolor.Color(1,1,1), ambient=.1, diffuse=.9, specular=.9, shininess=200):
+        self.color= color
+        self.ambient = ambient
+        self.diffuse = diffuse
+        self.specular = specular
+        self.shininess = shininess
+
+    def equal(self, other):
+        return self.color==other.color and math.isclose(self.ambient,
+                        other.ambient) and math.isclose(self.diffuse,
+                        other.diffuse) and math.isclose(self.specular,
+                       other.specular) and math.isclose(self.shininess,other.shininess)
+    
+    
+def lighting(material: Material,
+                    l: pointlight,
+                point: mytuple.Point,
+                  eye: mytuple.Vector,
+               normal: mytuple.Vector):  
+    sourcev = mytuple.Vector.normalize(l.position - point)
+    ambient = l.intensity * material.color * material.ambient
+
+    sourcedotnormal = sourcev.dot(normal)
+    if sourcedotnormal < 0:
+        #light source is on the other side
+        diffuse = mycolor.Color.black()
+        specular = mycolor.Color.black()
+    else:
+        diffuse = l.intensity * material.color *material.diffuse *  sourcedotnormal
+
+        reflected = -sourcev.reflect(normal)
+        if reflected.dot(eye) <=0:
+            specular = mycolor.Color.black()
+        else:
+            k = reflected.dot(eye)**material.shininess
+            specular = l.intensity * material.specular * k
+    return ambient + diffuse + specular
+
+
+
+
 
 #SPHERE, RAY, INTERSECTIONS
 
@@ -11,9 +62,9 @@ class sphere:
     def __init__(self):
         self.transform = mytuple.Matrix.Id()
         self.material  = Material()
-        
     def settransform(self, m: mytuple.Matrix):
         self.transform = m
+        
     def normal(self, p: mytuple.Point):
         p_wrtobj = self.transform.inverse() * p
         n_wrtobj = p_wrtobj - mytuple.Point(0,0,0)
@@ -21,25 +72,10 @@ class sphere:
 
         n.w = 0   #serve se ho traslazioni
         return mytuple.Vector.normalize(n.to_vector())
+    
     def equal(self,other):
         return self.transform.equal(other.transform) and self.material.equal(other.material)
     
-
-class intersection:
-    def __init__(self, t, obj):
-        self.t = t
-        self.obj = obj
-
-def intersections(*names): #inutile?
-    return list(names)
-
-def hit(intersezioni: list):
-    """returns the intersection with lowest non negative t, if it exists"""
-    lista = [x for x in intersezioni if x.t>0]
-    if lista:
-        lista.sort(key=lambda x: x.t)
-        return lista[0]
-
 
 class ray:
     def __init__(self, origin: mytuple.Point, direction: mytuple.Vector):
@@ -77,55 +113,35 @@ class ray:
         return ray(o,d)
 
 
-#LIGHTING #############################################
-class pointlight:
-    def __init__(self, pos: mytuple.Point, intens: mycolor.Color):
-        self.position= pos
-        self.intensity = intens
 
-    def equal(self, other):
-        return self.position==other.position and self.intensity==other.intensity
+class intersection:
+    def __init__(self, t, obj):
+        self.t = t
+        self.obj = obj
 
-class Material:
-    def __init__(self,color= mycolor.Color(1,1,1), ambient=.1, diffuse=.9, specular=.9, shininess=200):
-        self.color= color
-        self.ambient = ambient
-        self.diffuse = diffuse
-        self.specular = specular
-        self.shininess = shininess
+def intersections(*names): #inutile?
+    return list(names)
 
-    def equal(self, other):
-        return self.color==other.color and math.isclose(self.ambient,
-                        other.ambient) and math.isclose(self.diffuse,
-                        other.diffuse) and math.isclose(self.specular,
-                       other.specular) and math.isclose(self.shininess,other.shininess)
-    
+def hit(intersezioni: list):
+    #"""returns the one with lowest non negative t, if it exists"""
+    lista = [x for x in intersezioni if x.t>0]
+    if lista:
+        lista.sort(key=lambda x: x.t)
+        return lista[0]
 
-    
-def lighting(material: Material,
-             l:        pointlight,
-             point:    mytuple.Point,
-             eye:      mytuple.Vector,
-             normal:   mytuple.Vector):  
-    sourcev = mytuple.Vector.normalize(l.position - point)
-    ambient = l.intensity * material.color * material.ambient
 
-    sourcedotnormal = sourcev.dot(normal)
-    if sourcedotnormal < 0:
-        #light source is on the other side
-        diffuse = mycolor.Color.black()
-        specular = mycolor.Color.black()
-    else:
-        diffuse = l.intensity * material.color *material.diffuse *  sourcedotnormal
+def precomps( i: intersection, r: ray):
+    comps = {'t':i.t,
+             'obj':i.obj,
+             'point':r.position(i.t),
+             'eyev':-r.direction,
+             'inside':False,
+             'normal':i.obj.normal( r.position(i.t)) }
 
-        reflected = -sourcev.reflect(normal)
-        if reflected.dot(eye) <=0:
-            specular = mycolor.Color.black()
-        else:
-            k = reflected.dot(eye)**material.shininess
-            specular = l.intensity * material.specular * k
-    return ambient + diffuse + specular
-
+    if comps['normal'].dot(comps['eyev']) < 0: #inside
+        comps['inside'] =True
+        comps['normal'] =-comps['normal']
+    return comps
 
 
 
@@ -144,7 +160,6 @@ class World:
         s1.material.color = mycolor.Color(0.8, 1.0, 0.6)
         s1.material.diffuse = 0.7
         s1.material.specular= 0.2
-
         s2 = sphere()
         s2.transform = mytuple.Matrix.scaling(.5, .5, .5)
 
@@ -153,10 +168,14 @@ class World:
         w.light = l
         return w
 
-    def intersectworld(self, r):
+    def intersectworld(self, r: ray): #mi ordina le intersezioni di r coi vari objects
         res = []
         for elem in self.obj:
-            res.extend( r.inters(elem))  #r è lista di intersections
-            #print(f"\n{res}")
-            
+            res.extend( r.inters(elem))  # lista di intersections
         return sorted(res, key= lambda x: x.t)
+
+    def shade_hit(self, comps: dict): # aus# -> color at the intersection given by comps
+        return lighting(comps['obj'].material, self.light, comps['point'], comps['eyev'], comps['normal'])
+
+    def colorat(self, r: ray):
+        pass
