@@ -130,7 +130,7 @@ def hit(intersezioni: list):
         return lista[0]
 
 
-def precomps( i: intersection, r: ray):
+def precomp( i: intersection, r: ray):  #returns info on that intersection
     comps = {'t':i.t,
              'obj':i.obj,
              'point':r.position(i.t),
@@ -168,7 +168,7 @@ class World:
         w.light = l
         return w
 
-    def intersectworld(self, r: ray): #mi ordina le intersezioni di r coi vari objects
+    def intersectworld(self, r: ray): #(bastava hit?) #mi ordina le intersezioni di r coi vari objects
         res = []
         for elem in self.obj:
             res.extend( r.inters(elem))  # lista di intersections
@@ -177,5 +177,11 @@ class World:
     def shade_hit(self, comps: dict): # aus# -> color at the intersection given by comps
         return lighting(comps['obj'].material, self.light, comps['point'], comps['eyev'], comps['normal'])
 
-    def colorat(self, r: ray):
-        pass
+    def colorat(self, r: ray):   #finale
+        intersezioni = self.intersectworld(r)
+        h = hit(intersezioni)
+        if not h:
+            return mycolor.Color.black()
+        else:
+            comps = precomp(h, r)
+            return self.shade_hit(comps)

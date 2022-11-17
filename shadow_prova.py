@@ -6,7 +6,7 @@ from myworld import *
 rayorigin = Point(0,0,-5)  #= osservatore
 zwall = 10
 wallsize= 20
-npixels = 100
+npixels = 400
 
 def castshadow(rayorigin,zwall,wallsize,npixels, luce, shape, filename= 'shadow.ppm'):
 
