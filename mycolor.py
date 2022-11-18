@@ -1,5 +1,5 @@
 import math
-import mytuple  #per trajectory(), ray sphere ecc
+import mytuple  #per trajectory(), #ray sphere ecc
 
 
 class Color:
@@ -93,6 +93,14 @@ def canvastoppm(canvas: Canvas, filename: str):
 
 
 
+
+class Camera:
+    def __init__(self, hsize, vsize, field):
+        self.hsize = hsize
+        self.vsize = vsize
+        self.field = field
+        # self.transform =
+        # self.pixelsize = 
 
 
 

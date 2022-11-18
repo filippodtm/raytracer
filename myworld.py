@@ -174,7 +174,7 @@ class World:
             res.extend( r.inters(elem))  # lista di intersections
         return sorted(res, key= lambda x: x.t)
 
-    def shade_hit(self, comps: dict): # aus# -> color at the intersection given by comps
+    def shade_hit(self, comps: dict): # aus(solo per multiple lights# -> color at the intersection given by comps
         return lighting(comps['obj'].material, self.light, comps['point'], comps['eyev'], comps['normal'])
 
     def colorat(self, r: ray):   #finale
@@ -185,3 +185,5 @@ class World:
         else:
             comps = precomp(h, r)
             return self.shade_hit(comps)
+
+        

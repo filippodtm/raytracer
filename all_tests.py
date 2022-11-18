@@ -841,7 +841,7 @@ class TestShading(unittest.TestCase):
 
         
 
-
+#CHAPTER 7
 class TestWorld(unittest.TestCase):
 
     def test_emptyworld(self):
@@ -953,3 +953,58 @@ class TestWorld(unittest.TestCase):
 
         self.assertTrue(w.colorat(r) == inner.material.color)
         
+
+
+
+class TestView(unittest.TestCase):
+
+    def test_viewdefaultorientation(self):
+        from0 = mytuple.Point(0,0,0) # 'from' non si può usare 
+        to = mytuple.Point(0,0,-1)
+        up = mytuple.Vector(0,1,0)
+        #default
+        t = mytuple.Matrix.viewtransform(from0, to, up)
+        self.assertTrue(t.equal(mytuple.Matrix.Id()))
+
+        from0 = mytuple.Point(0,0,0)
+        to = mytuple.Point(0,0,1)
+        up = mytuple.Vector(0,1,0)
+
+        t= mytuple.Matrix.viewtransform(from0,to,up)
+        self.assertTrue(t.equal(mytuple.Matrix.scaling(-1,1,-1)))
+
+    def test_viewmovesworld(self):
+        from0 = mytuple.Point(0,0,8)
+        to = mytuple.Point(0,0,0)
+        up = mytuple.Vector(0,1,0)
+
+        t= mytuple.Matrix.viewtransform(from0,to,up)
+        self.assertTrue(t.equal(mytuple.Matrix.translation(0,0,-8)))
+
+    def test_viewarbitrary(self):
+        from0 = mytuple.Point(1,3,2)
+        to = mytuple.Point(4,-2,8)
+        up = mytuple.Vector(1,1,0)
+
+        t = mytuple.Matrix.viewtransform(from0,to,up)
+        print(t)
+        self.assertTrue(t.round().equal(mytuple.Matrix([[-0.50709,0.50709, 0.67612,-2.36643],
+                                                [0.76772, 0.60609, 0.12122,-2.82843],
+                                                [-0.35857,0.59761,-0.71714, 0],
+                                                [ 0,      0,       0,       1]])))
+
+    def test_buildcamera(self):
+        hsize, vsize, field = 160, 120, math.pi/2
+        c = mycolor.Camera(hsize, vsize, field)
+        
+        self.assertEqual(c.hsize, 160)
+        self.assertEqual(c.vsize, 120)
+        self.assertEqual(c.field, math.pi/2)
+        self.assertEqual(c.transform, mytuple.Matrix.Id())
+
+    def test_camera_pixelsize(self):
+        c = mycolor.Camera(200, 125, math.pi/2)
+        self.assertEqual(c.pixelsize, 0.01)
+
+        c = mycolor.Camera(125,200,math.pi/2)
+        self.assertEqual(c.pixelsize, 0.01)

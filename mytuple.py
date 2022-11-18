@@ -173,11 +173,10 @@ class Matrix:
                        [0,1,0,y],
                        [0,0,1,z],
                        [0,0,0,1]])
-
     @staticmethod
     def scaling(x,y,z):
-        return Matrix([[x,0,0,0],[0,y,0,0],[0,0,z,0],[0,0,0,1]])    
-
+        return Matrix([[x,0,0,0],[0,y,0,0],[0,0,z,0],[0,0,0,1]])
+    
     @staticmethod
     def xrotation(r):
         return Matrix([[1, 0, 0, 0],
@@ -196,7 +195,6 @@ class Matrix:
                        [math.sin(r), math.cos(r),0,0],
                        [0, 0, 1, 0],
                        [0, 0, 0, 1]])
-
     @staticmethod
     def shear(x2,x3,y1,y3,z1,z2):
         return Matrix([[1, x2,x3,0],
@@ -204,6 +202,18 @@ class Matrix:
                        [z1,z2, 1,0],
                        [0, 0, 0, 1]])
 
+    @staticmethod
+    def viewtransform(from0, to, up):
+        forward = Vector.normalize(to-from0)
+        upnormal = up.normalize()
+        left = Vector.cross(forward,upnormal)
+        trueup= Vector.cross(left, forward)
+
+        orientation = Matrix([[left.x, left.y, left.z, 0],
+                              [trueup.x, trueup.y, trueup.z, 0],
+                              [-forward.x, -forward.y, -forward.z, 0],
+                              [0,  0,  0,  1]])
+        return orientation * Matrix.translation(-from0.x, -from0.y, -from0.z)
     
     
     def __init__(self, grid):
