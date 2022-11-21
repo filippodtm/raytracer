@@ -987,24 +987,44 @@ class TestView(unittest.TestCase):
         up = mytuple.Vector(1,1,0)
 
         t = mytuple.Matrix.viewtransform(from0,to,up)
-        print(t)
+        #print(t)
         self.assertTrue(t.round().equal(mytuple.Matrix([[-0.50709,0.50709, 0.67612,-2.36643],
                                                 [0.76772, 0.60609, 0.12122,-2.82843],
                                                 [-0.35857,0.59761,-0.71714, 0],
                                                 [ 0,      0,       0,       1]])))
 
+        
     def test_buildcamera(self):
         hsize, vsize, field = 160, 120, math.pi/2
-        c = mycolor.Camera(hsize, vsize, field)
+        c = myworld.Camera(hsize, vsize, field)
         
         self.assertEqual(c.hsize, 160)
         self.assertEqual(c.vsize, 120)
         self.assertEqual(c.field, math.pi/2)
-        self.assertEqual(c.transform, mytuple.Matrix.Id())
+        self.assertTrue(c.transform.equal( mytuple.Matrix.Id()))
 
     def test_camera_pixelsize(self):
-        c = mycolor.Camera(200, 125, math.pi/2)
-        self.assertEqual(c.pixelsize, 0.01)
+        c = myworld.Camera(200, 125, math.pi/2)
+        self.assertAlmostEqual(c.pixelsize, 0.01) #almost
 
-        c = mycolor.Camera(125,200,math.pi/2)
-        self.assertEqual(c.pixelsize, 0.01)
+        c = myworld.Camera(125,200,math.pi/2)
+        self.assertAlmostEqual(c.pixelsize, 0.01)
+
+    def test_raytocenterorcorner(self):
+        c = myworld.Camera(201, 101, math.pi/2)
+        r = myworld.Camera.rayforpixel(c,100,50)
+
+        self.assertEqual(r.origin, mytuple.Point(0,0,0))
+        self.assertEqual(r.direction, mytuple.Vector(0,0,-1))
+
+        r = myworld.Camera.rayforpixel(c, 0,0)
+        self.assertEqual(r.origin, mytuple.Point(0,0,0))
+        self.assertEqual(r.direction.round(), mytuple.Vector(0.66519, 0.33259, -0.66851))
+
+    def test_rayforpixel_transformed(self):
+        c = myworld.Camera(201, 101, math.pi/2)
+        c.transform = mytuple.Matrix.yrotation(math.pi/4) * mytuple.Matrix.translation(0,-2,5)
+        r = myworld.Camera.rayforpixel(c,100,50)
+
+        self.assertEqual(r.origin, mytuple.Point(0,2,-5))
+        self.assertEqual(r.direction, mytuple.Vector(math.sqrt(2)/2, 0, -math.sqrt(2)/2))

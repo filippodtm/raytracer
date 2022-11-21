@@ -147,6 +147,40 @@ def precomp( i: intersection, r: ray):  #returns info on that intersection
 
 # WORLD/SCENE #####################################################################
 
+class Camera:
+
+    def __init__(self, hsize:int, vsize:int, field:float):
+        self.hsize = hsize
+        self.vsize = vsize
+        self.field = field
+        self.transform = mytuple.Matrix.Id()
+
+        half_view= math.tan(self.field /2)
+        aspect = self.hsize / self.vsize
+        if aspect >=1:
+            self.halfwidth  = half_view
+            self.halfheight = half_view / aspect
+        else:
+            self.halfwidth  = half_view * aspect
+            self.halfheight = half_view
+            
+        self.pixelsize = self.halfwidth*2 / self.hsize
+
+    def rayforpixel(self, i,j):  #sdm
+        xoffset = (i+.5)* self.pixelsize
+        yoffset = (j+.5)* self.pixelsize
+        worldx = self.halfwidth - xoffset
+        worldy = self.halfheight -yoffset
+
+        pixel = self.transform.inverse() * mytuple.Point(worldx, worldy, -1)
+        origin = self.transform.inverse() * mytuple.Point(0,0,0)
+
+        return ray(origin, mytuple.Vector.normalize(pixel-origin))
+
+
+
+
+
 class World:
 
     def __init__(self):
