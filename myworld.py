@@ -7,7 +7,7 @@ import mycolor  # Material, light
 #LIGHTING #############################################
 class pointlight:
     def __init__(self, pos: mytuple.Point, intens: mycolor.Color):
-        self.position= pos
+        self.position = pos
         self.intensity = intens
 
     def equal(self, other):
