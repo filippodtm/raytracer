@@ -848,7 +848,7 @@ class TestWorld(unittest.TestCase):
         w = myworld.World()
 
         self.assertFalse(w.obj)
-        self.assertFalse(w.light)
+        self.assertFalse(w.lightsource)
 
     def test_default(self):
         l = myworld.pointlight(mytuple.Point(-10,10,-10), mycolor.Color(1,1,1))
@@ -861,7 +861,7 @@ class TestWorld(unittest.TestCase):
         s2.transform = mytuple.Matrix.scaling(.5, .5, .5)
 
         w = myworld.World.defaultworld()
-        self.assertTrue( myworld.pointlight.equal(w.light, l))
+        self.assertTrue( myworld.pointlight.equal(w.lightsource, l))
 
         # filter is not empty if s1.equal(elem) for some elem in w.obj
         self.assertTrue( filter(s1.equal, w.obj) )
@@ -921,7 +921,7 @@ class TestWorld(unittest.TestCase):
 
     def test_shadehit_inside(self):
         w = myworld.World.defaultworld()
-        w.light = myworld.pointlight(mytuple.Point(0, .25, 0), mycolor.Color(1,1,1))
+        w.lightsource = myworld.pointlight(mytuple.Point(0, .25, 0), mycolor.Color(1,1,1))
         
         r = myworld.ray(mytuple.Point(0,0,0), mytuple.Vector(0,0,1))
         shape = w.obj[1]
@@ -929,7 +929,7 @@ class TestWorld(unittest.TestCase):
         comps = myworld.precomp(i, r)
         
         c = w.shade_hit(comps)
-        self.assertTrue(c.round5() ==mycolor.Color(.90498, .90498, .90498))
+        self.assertTrue(c.round5() == mycolor.Color(.90498, .90498, .90498))
 
 
     def test_colorat(self):
@@ -1028,3 +1028,16 @@ class TestView(unittest.TestCase):
 
         self.assertEqual(r.origin, mytuple.Point(0,2,-5))
         self.assertEqual(r.direction, mytuple.Vector(math.sqrt(2)/2, 0, -math.sqrt(2)/2))
+
+    def test_render(self):
+        w = myworld.World.defaultworld()
+        c = myworld.Camera(11,11, math.pi/2)
+        from_ = mytuple.Point(0,0,-5)
+        to = mytuple.Point(0,0,0)
+        up = mytuple.Vector(0,1,0)
+        c.transform = mytuple.Matrix.viewtransform(from_,to,up)
+
+        image = myworld.Camera.render(c, w)
+        #mycolor.canvastoppm(image, "testrender.ppm")
+        self.assertEqual(image[5,5].round5(), mycolor.Color(0.38066, 0.47583, 0.2855))
+        

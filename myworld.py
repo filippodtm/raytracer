@@ -155,6 +155,7 @@ class Camera:
         self.field = field
         self.transform = mytuple.Matrix.Id()
 
+        #pixelsize:
         half_view= math.tan(self.field /2)
         aspect = self.hsize / self.vsize
         if aspect >=1:
@@ -177,15 +178,25 @@ class Camera:
 
         return ray(origin, mytuple.Vector.normalize(pixel-origin))
 
+    def render(self, w) -> mycolor.Canvas:
+        
+        image = mycolor.Canvas(self.hsize, self.vsize)
+
+        for j in range(self.vsize):
+            for i in range(self.hsize):
+                r = self.rayforpixel(i,j)
+                color = w.colorat(r)
+                image.writepixel(i,j,color)
+        return image
 
 
 
 
+    
 class World:
-
     def __init__(self):
         self.obj = []
-        self.light = None
+        self.lightsource = None
 
     @staticmethod
     def defaultworld():
@@ -199,17 +210,19 @@ class World:
 
         w = World()
         w.obj = [s1, s2]
-        w.light = l
+        w.lightsource = l
         return w
 
-    def intersectworld(self, r: ray): #(bastava hit?) #mi ordina le intersezioni di r coi vari objects
+    def intersectworld(self, r: ray): #(bastava hit?) #mi ordina le intersezioni di un ray coi vari objects
         res = []
         for elem in self.obj:
             res.extend( r.inters(elem))  # lista di intersections
         return sorted(res, key= lambda x: x.t)
 
-    def shade_hit(self, comps: dict): # aus(solo per multiple lights# -> color at the intersection given by comps
-        return lighting(comps['obj'].material, self.light, comps['point'], comps['eyev'], comps['normal'])
+    def shade_hit(self, comps: dict): # aus(solo per multiple lights)#
+                                     #-> color at the intersection given by comps
+        return lighting(comps['obj'].material, self.lightsource,
+                        comps['point'], comps['eyev'], comps['normal'])
 
     def colorat(self, r: ray):   #finale
         intersezioni = self.intersectworld(r)
