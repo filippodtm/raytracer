@@ -9,13 +9,15 @@ w = World()
 
 floor = sphere()
 floor.transform = Matrix.scaling(10, .01, 10)
-floor.material.color = Color(1, .9, 9)
+floor.material = Material()
+floor.material.color = Color(1, .9, .9)  #dc
 floor.material.specular = 0
 
 leftwall = sphere()
 leftwall.transform = Matrix.translation(0,0,5) * Matrix.yrotation(-pi
                                         /4) *Matrix.xrotation(pi/2) * Matrix.scaling(10, .01, 10)
 leftwall.material = floor.material
+
 
 rightwall = sphere()
 rightwall.transform = Matrix.translation(0,0,5) * Matrix.yrotation(pi
