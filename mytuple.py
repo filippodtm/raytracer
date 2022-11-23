@@ -1,5 +1,7 @@
 import math
 
+EPSILON = 1e-09
+
 class MyTuple:
     def __init__(self, x, y, z, w):
         self.x = x

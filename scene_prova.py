@@ -10,7 +10,7 @@ w = World()
 floor = sphere()
 floor.transform = Matrix.scaling(10, .01, 10)
 floor.material = Material()
-floor.material.color = Color(1, .9, .9)  #dc
+floor.material.color = Color(1, .9, .9)
 floor.material.specular = 0
 
 leftwall = sphere()
@@ -28,10 +28,10 @@ rightwall.material = floor.material
 
 
 middle = sphere()
-middle.transform = Matrix.translation(-.5, 1, .5)
+middle.transform = Matrix.translation(-.5, 1, .5) #* Matrix.shear(1,1, 0,1, 0,0)
 middle.material.color = Color(.1, 1, .5)
 middle.material.diffuse = 0.7
-middle.material.specular = 0.5 #
+middle.material.specular = 1 #
 
 right = sphere()
 right.transform = Matrix.translation(1.5, 0.5, -0.5) * Matrix.scaling(.5, .5, .5)
@@ -51,8 +51,8 @@ w.lightsource = pointlight(Point(-10, 10, -10), Color(1,1,1))
 
 
 
-camera = Camera(300, 150, pi/3)
-camera.transform = Matrix.viewtransform(Point(0, 1.5, -20), Point(0,1,0), Vector(0,1,0))
-                                                        #
+camera = Camera(200, 100, pi/3)
+camera.transform = Matrix.viewtransform(Point(0, 1.5, -5), Point(0,1,0), Vector(0,1,0))
+                                                       #
 canvas = camera.render(w)
 canvastoppm(canvas, 'scene1.ppm')

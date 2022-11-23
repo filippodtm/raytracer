@@ -1041,3 +1041,69 @@ class TestView(unittest.TestCase):
         #mycolor.canvastoppm(image, "testrender.ppm")
         self.assertEqual(image[5,5].round5(), mycolor.Color(0.38066, 0.47583, 0.2855))
         
+
+
+
+
+# # # CHAPTER 8 #############################################################################
+
+class ShadowsTest(unittest.TestCase):
+
+    def test_lighting_surfaceinshadow(self):
+        #common background (p.86)
+        m = myworld.Material()
+        position = mytuple.Point(0,0,0)
+        
+        eye = mytuple.Vector(0,0,-1)
+        normal = mytuple.Vector(0,0,-1)
+        light = myworld.pointlight(mytuple.Point(0,0,-10), mycolor.Color(1,1,1))
+        inshadow = True
+        result = myworld.lighting(m, light, position, eye, normal, inshadow)
+        
+        self.assertEqual(result, mycolor.Color(0.1, 0.1, 0.1))
+
+    def test_notinshadow_notcollinear(self):
+        w = myworld.World.defaultworld()
+        p = mytuple.Point(0,10,0)
+        self.assertFalse( w.isinshadow(p))
+
+    def test_inshadow_objbetween(self):
+        w = myworld.World.defaultworld()
+        p = mytuple.Point(10,-10,10)
+        self.assertTrue( w.isinshadow(p))
+
+    def test_notinshadow_objbehindlight(self):
+        w = myworld.World.defaultworld()
+        p = mytuple.Point(-20,20,-20)
+        self.assertFalse( w.isinshadow(p))
+
+    def test_notinshadow_objbehindpoint(self):
+        w = myworld.World.defaultworld()
+        p = mytuple.Point(-2,2,-2)
+        self.assertFalse( w.isinshadow(p))
+
+    #change World.shade_hit()
+    def test_shadehit_inshadow(self):
+        w = myworld.World()
+        w.lightsource = myworld.pointlight(mytuple.Point(0,0,-10), mycolor.Color(1,1,1))
+        s1 = myworld.sphere()
+        s2 = myworld.sphere()
+        s2.transform = mytuple.Matrix.translation(0,0,10)
+        w.obj = [s1, s2]
+        r = myworld.ray(mytuple.Point(0,0,5), mytuple.Vector(0,0,1))
+        i = myworld.intersection(4, s2)
+
+        comps= myworld.precomp(i,r)
+        c = w.shade_hit(comps)
+        self.assertEqual(c, mycolor.Color(0.1, 0.1, 0.1))
+        # funziona ma visivamente, acne sull'immagine
+
+    def test_thehit_offsetthepoint(self): #evitare acne
+        r = myworld.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
+        shape = myworld.sphere()
+        shape.transform = mytuple.Matrix.translation(0,0,1)
+        i = myworld.intersection(5, shape)
+        comps = myworld.precomp(i,r)
+
+        self.assertLess( comps['pointover'].z , -mytuple.EPSILON/2)
+        self.assertLess( comps['pointover'].z , comps['point'].z)

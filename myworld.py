@@ -32,10 +32,14 @@ def lighting(material: Material,
                     l: pointlight,
                 point: mytuple.Point,
                   eye: mytuple.Vector,
-               normal: mytuple.Vector):  
+               normal: mytuple.Vector,
+             inshadow= False):
+    
     sourcev = mytuple.Vector.normalize(l.position - point)
     ambient = l.intensity * material.color * material.ambient
-
+    if inshadow:
+        return ambient 
+    
     sourcedotnormal = sourcev.dot(normal)
     if sourcedotnormal < 0:
         #light source is on the other side
@@ -131,6 +135,7 @@ def hit(intersezioni: list):
 
 
 def precomp( i: intersection, r: ray):  #returns info on that intersection
+
     comps = {'t':i.t,
              'obj':i.obj,
              'point':r.position(i.t),
@@ -141,11 +146,80 @@ def precomp( i: intersection, r: ray):  #returns info on that intersection
     if comps['normal'].dot(comps['eyev']) < 0: #inside
         comps['inside'] =True
         comps['normal'] =-comps['normal']
+
+    comps['pointover'] = comps['point']+ mytuple.EPSILON *comps['normal']
     return comps
 
 
 
 # WORLD/SCENE #####################################################################
+
+class World:
+    def __init__(self):
+        self.obj = []
+        self.lightsource = None
+
+    @staticmethod
+    def defaultworld():
+        l = pointlight(mytuple.Point(-10,10,-10), mycolor.Color(1,1,1))
+        s1 = sphere()
+        s1.material.color = mycolor.Color(0.8, 1.0, 0.6)
+        s1.material.diffuse = 0.7
+        s1.material.specular= 0.2
+        s2 = sphere()
+        s2.transform = mytuple.Matrix.scaling(.5, .5, .5)
+
+        w = World()
+        w.obj = [s1, s2]
+        w.lightsource = l
+        return w
+
+    def intersectworld(self, r: ray): #(bastava hit?)
+        #mi ordina le intersezioni di un ray coi vari objects
+        res = []
+        for elem in self.obj:
+            res.extend( r.inters(elem))  # lista di intersections
+        return sorted(res, key= lambda x: x.t)
+
+    def shade_hit(self, comps: dict):
+        # aus(solo per multiple lights)#
+        inshadow = self.isinshadow(comps['point']) #non basta
+        
+        return lighting(comps['obj'].material, self.lightsource,
+                        comps['point'], comps['eyev'], comps['normal'], inshadow)
+                        # -> color at the intersection given by comps
+
+    def colorat(self, r: ray):   #finale
+        intersezioni = self.intersectworld(r)
+        h = hit(intersezioni)
+        if not h:
+            return mycolor.Color.black()
+        else:
+            comps = precomp(h, r)
+            return self.shade_hit(comps)
+
+        
+    def isinshadow(self, point):
+        #(chap8) send a ray from point to lightsource. if it hits smth, point is in shadow
+        
+        v = self.lightsource.position - point
+        distance = v.magnitude()
+        r = ray(point, v.normalize())
+        intersz = self.intersectworld(r)
+
+        h = hit(intersz)
+        if h  and  h.t <distance:
+            return True
+        else:
+            return False
+
+
+
+
+
+
+
+
 
 class Camera:
 
@@ -189,48 +263,3 @@ class Camera:
                 image.writepixel(i,j,color)
         return image
 
-
-
-
-    
-class World:
-    def __init__(self):
-        self.obj = []
-        self.lightsource = None
-
-    @staticmethod
-    def defaultworld():
-        l = pointlight(mytuple.Point(-10,10,-10), mycolor.Color(1,1,1))
-        s1 = sphere()
-        s1.material.color = mycolor.Color(0.8, 1.0, 0.6)
-        s1.material.diffuse = 0.7
-        s1.material.specular= 0.2
-        s2 = sphere()
-        s2.transform = mytuple.Matrix.scaling(.5, .5, .5)
-
-        w = World()
-        w.obj = [s1, s2]
-        w.lightsource = l
-        return w
-
-    def intersectworld(self, r: ray): #(bastava hit?) #mi ordina le intersezioni di un ray coi vari objects
-        res = []
-        for elem in self.obj:
-            res.extend( r.inters(elem))  # lista di intersections
-        return sorted(res, key= lambda x: x.t)
-
-    def shade_hit(self, comps: dict): # aus(solo per multiple lights)#
-                                     #-> color at the intersection given by comps
-        return lighting(comps['obj'].material, self.lightsource,
-                        comps['point'], comps['eyev'], comps['normal'])
-
-    def colorat(self, r: ray):   #finale
-        intersezioni = self.intersectworld(r)
-        h = hit(intersezioni)
-        if not h:
-            return mycolor.Color.black()
-        else:
-            comps = precomp(h, r)
-            return self.shade_hit(comps)
-
-        
