@@ -270,7 +270,7 @@ class Matrixtest(unittest.TestCase):
                             [44,54,114,108],
                             [40,58,110,102],
                             [16,26, 46, 42]])
-        self.assertEqual( C.equal(A*B), True)
+        self.assertTrue( C.equal(A*B))
 
     def test_matrixtuple(self):
         A = mytuple.Matrix([[1,2,3,4],
@@ -288,7 +288,7 @@ class Matrixtest(unittest.TestCase):
                             [2,4, 8,16],
                             [4,8,16,32]])
 
-        self.assertEqual(A.equal(A* mytuple.Matrix.Id()), True)
+        self.assertTrue(A.equal(A* mytuple.Matrix.Id()))
 
     def test_tuplebyidentity(self):
         a = mytuple.MyTuple(1,2,3,4)
@@ -305,8 +305,8 @@ class Matrixtest(unittest.TestCase):
                             [3,0,5,5],
                             [0,8,3,8]])
         C = mytuple.Matrix.Id().transpose()
-        self.assertEqual(A.transpose().equal(B), True)
-        self.assertEqual(C.equal(mytuple.Matrix.Id()), True)
+        self.assertTrue(A.transpose().equal(B))
+        self.assertTrue(C.equal(mytuple.Matrix.Id()))
 
         
     def test_2x2determinant(self):
@@ -318,15 +318,15 @@ class Matrixtest(unittest.TestCase):
         A= mytuple.Matrix([[ 1,5,0],
                            [-3,2,7],
                            [ 0,6,-3]])
-        self.assertEqual(A.submatrix(0,2).equal(mytuple.Matrix([[-3,2],
-                                                                [0,6]])), True)
+        self.assertTrue(A.submatrix(0,2).equal(mytuple.Matrix([[-3,2],
+                                                                [0,6]])))
         B= mytuple.Matrix([[-6,1, 1,6],
                            [-8,5, 8,6],
                            [-1,0, 8,2],
                            [-7,1,-1,1]])
-        self.assertEqual(B.submatrix(2,1).equal(mytuple.Matrix([[-6, 1,6],
-                                                           [-8, 8,6],
-                                                                [-7,-1,1]])), True)
+        self.assertTrue(B.submatrix(2,1).equal(mytuple.Matrix([[-6, 1,6],
+                                                               [-8, 8,6],
+                                                               [-7,-1,1]])))
     def test_minor_cofactor(self):
         A= mytuple.Matrix([[3, 5,0],
                            [2,-1,-7],
@@ -369,14 +369,14 @@ class Matrixtest(unittest.TestCase):
                             [4,-9,3,-7],
                             [9,1,7,-6]])
         self.assertAlmostEqual(A.det(),-2120)
-        self.assertEqual(A.invertible(), True)
+        self.assertTrue(A.invertible())
         
         B = mytuple.Matrix([[-4,2,-2,-3],
                             [9, 6, 2,6],
                             [0,-5,1,-5],
                             [0, 0, 0,0]])
         self.assertAlmostEqual(B.det(), 0)
-        self.assertEqual(B.invertible(),False)
+        self.assertFalse(B.invertible())
 
     def test_inverting(self):
         A = mytuple.Matrix([[-5,2,6,-8],
@@ -391,12 +391,12 @@ class Matrixtest(unittest.TestCase):
         self.assertAlmostEqual(A.det(), 532)
 
         self.assertAlmostEqual(A.cofactor(2,3), -160)
-        self.assertEqual(math.isclose(B[3,2],-160/532), True)
+        self.assertTrue(math.isclose(B[3,2],-160/532))
         
         self.assertAlmostEqual(A.cofactor(3,2), 105)
-        self.assertEqual(math.isclose(B[2,3], 105/532), True)
+        self.assertTrue(math.isclose(B[2,3], 105/532))
         
-        self.assertEqual(C.equal(B.round()), True)
+        self.assertTrue(C.equal(B.round()))
 
     def test_inverting2(self):
         A = mytuple.Matrix([[8,-5, 9,2],
@@ -408,17 +408,17 @@ class Matrixtest(unittest.TestCase):
                             [-0.07692, 0.12308, 0.02564, 0.03077],
                             [0.35897, 0.35897, 0.43590, 0.92308],
                             [-0.69231,-0.69231,-0.76923,-1.92308]])
-        self.assertEqual(C.equal(B.round()), True)
+        self.assertTrue(C.equal(B.round()))
 
         A2 = mytuple.Matrix([[9, 3, 0, 9],
                              [-5,-2,-6,-3],
                              [-4,9,6,4],
                              [-7,6,6,2]])
-        C2= mytuple.Matrix([[-0.04074, -0.07778, 0.14444, -0.22222],
+        C2= mytuple.Matrix([[-0.04074,-0.07778, 0.14444, -0.22222],
                             [-0.07778, 0.03333, 0.36667, -0.33333],
-                            [-0.02901, -0.14630, -0.10926, 0.12963],
-                            [0.17778, 0.06667, -0.26667, 0.33333]])
-        assert(C.equal(A.inverse().round()))
+                            [-0.02901,-0.14630, -0.10926, 0.12963],
+                            [ 0.17778, 0.06667, -0.26667, 0.33333]])
+        self.assertTrue(C.equal( A.inverse().round() ))
 
     def test_multinverse(self):
         A = mytuple.Matrix([[3,-9,7,3],
@@ -430,7 +430,7 @@ class Matrixtest(unittest.TestCase):
                             [7,0,5,4],
                             [6,-2,0,5]])
         C = A*B
-        assert(A.equal(C*(B.inverse())))
+        self.assertTrue(A.equal( C*(B.inverse()) ))
 
 
 
@@ -493,7 +493,6 @@ class Transformationstest(unittest.TestCase):
 
         self.assertEqual(halfquarter*p , mytuple.Point(- math.sqrt(2)/2, math.sqrt(2)/2,0))
         self.assertEqual(fullquarter*p , mytuple.Point(-1,0,0))
-
 
         
     def test_shear(self):
@@ -566,8 +565,8 @@ class RayTest(unittest.TestCase):
         xs = r.inters(s)
 
         self.assertEqual(len(xs), 2)
-        self.assertEqual(xs[0].t, 4.0)
-        self.assertEqual(xs[1].t, 6.0)
+        self.assertAlmostEqual(xs[0].t, 4.0)
+        self.assertAlmostEqual(xs[1].t, 6.0)
 
     def test_inters1tangent(self):
         r = myworld.ray(mytuple.Point(0,1,-5), mytuple.Vector(0,0,1))
@@ -575,8 +574,8 @@ class RayTest(unittest.TestCase):
         xs = r.inters(s)
 
         self.assertEqual(len(xs), 2)
-        self.assertEqual(xs[0].t, 5.0)
-        self.assertEqual(xs[1].t, 5.0)
+        self.assertAlmostEqual(xs[0].t, 5.0)
+        self.assertAlmostEqual(xs[1].t, 5.0)
 
     def test_inters0(self):
         r = myworld.ray(mytuple.Point(0,2,-5), mytuple.Vector(0,0,1))
@@ -591,8 +590,8 @@ class RayTest(unittest.TestCase):
         xs = r.inters(s)
 
         self.assertEqual(len(xs), 2)
-        self.assertEqual(xs[0].t,-1.0)
-        self.assertEqual(xs[1].t, 1.0)
+        self.assertAlmostEqual(xs[0].t,-1.0)
+        self.assertAlmostEqual(xs[1].t, 1.0)
 
     def test_inters_behind(self):
         r = myworld.ray(mytuple.Point(0,0,5), mytuple.Vector(0,0,1))
@@ -600,15 +599,15 @@ class RayTest(unittest.TestCase):
         xs = r.inters(s)
 
         self.assertEqual(len(xs), 2)
-        self.assertEqual(xs[0].t, -6.0)
-        self.assertEqual(xs[1].t, -4.0)
+        self.assertAlmostEqual(xs[0].t, -6.0)
+        self.assertAlmostEqual(xs[1].t, -4.0)
 
         
     def test_intersection(self):
         s = myworld.sphere()
         
         i = myworld.intersection(3.5, s)
-        self.assertEqual(i.t, 3.5)
+        self.assertAlmostEqual(i.t, 3.5)
         self.assertEqual(i.obj, s)
 
     def test_aggregateintersections(self):
@@ -627,8 +626,8 @@ class RayTest(unittest.TestCase):
         xs = r.inters(s)
 
         self.assertEqual(len(xs), 2)
-        self.assertEqual(xs[0].obj , s)
-        self.assertEqual(xs[1].obj , s)
+        self.assertAlmostEqual(xs[0].obj , s)
+        self.assertAlmostEqual(xs[1].obj , s)
 
         
     def test_hit_positive(self):
@@ -684,11 +683,11 @@ class RayTest(unittest.TestCase):
 
     def test_spheretransform(self):
         s = myworld.sphere()
-        assert(mytuple.Matrix.equal(s.transform, mytuple.Matrix.Id()))
+        self.assertTrue(mytuple.Matrix.equal(s.transform, mytuple.Matrix.Id()))
 
         t= mytuple.Matrix.translation(2,3,4)
         s.settransform(t)
-        assert(t.equal(s.transform))
+        self.assertTrue(t.equal(s.transform))
 
     def test_inters_transformedray(self):
         s = myworld.sphere()
@@ -697,14 +696,16 @@ class RayTest(unittest.TestCase):
         s.settransform(mytuple.Matrix.scaling(2,2,2)) # scaled sphere
         xs = r.inters(s)
         self.assertEqual(len(xs), 2)
-        self.assertEqual(xs[0].t, 3)
-        self.assertEqual(xs[1].t, 7)
+        self.assertAlmostEqual(xs[0].t, 3)
+        self.assertAlmostEqual(xs[1].t, 7)
 
         s.settransform(mytuple.Matrix.translation(5,0,0)) # translated sphere
         xs = r.inters(s)
         self.assertEqual(len(xs), 0)
 
 
+
+        
 class TestShading(unittest.TestCase):
 
     def test_normal(self):
@@ -758,8 +759,8 @@ class TestShading(unittest.TestCase):
         position = mytuple.Point(0,0,0)
         l = myworld.pointlight(position,intensity)
 
-        self.assertEqual(l.position, position)
-        self.assertEqual(l.intensity, intensity)
+        self.assertAlmostEqual(l.position, position)
+        self.assertAlmostEqual(l.intensity, intensity)
 
     def test_material(self):
         m = myworld.Material()
@@ -873,10 +874,10 @@ class TestWorld(unittest.TestCase):
         xs = w.intersectworld(r)
 
         self.assertTrue(len(xs)==4)
-        self.assertEqual(xs[0].t, 4)
-        self.assertEqual(xs[1].t, 4.5)
-        self.assertEqual(xs[2].t, 5.5)
-        self.assertEqual(xs[3].t, 6)
+        self.assertAlmostEqual(xs[0].t, 4)
+        self.assertAlmostEqual(xs[1].t, 4.5)
+        self.assertAlmostEqual(xs[2].t, 5.5)
+        self.assertAlmostEqual(xs[3].t, 6)
 
     def test_precomputeinters(self):
         r = myworld.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
@@ -964,14 +965,14 @@ class TestView(unittest.TestCase):
         up = mytuple.Vector(0,1,0)
         #default
         t = mytuple.Matrix.viewtransform(from0, to, up)
-        self.assertTrue(t.equal(mytuple.Matrix.Id()))
+        self.assertTrue(t.equal( mytuple.Matrix.Id()))
 
         from0 = mytuple.Point(0,0,0)
         to = mytuple.Point(0,0,1)
         up = mytuple.Vector(0,1,0)
 
         t= mytuple.Matrix.viewtransform(from0,to,up)
-        self.assertTrue(t.equal(mytuple.Matrix.scaling(-1,1,-1)))
+        self.assertTrue(t.equal( mytuple.Matrix.scaling(-1,1,-1)))
 
     def test_viewmovesworld(self):
         from0 = mytuple.Point(0,0,8)
@@ -987,9 +988,8 @@ class TestView(unittest.TestCase):
         up = mytuple.Vector(1,1,0)
 
         t = mytuple.Matrix.viewtransform(from0,to,up)
-        #print(t)
         self.assertTrue(t.round().equal(mytuple.Matrix([[-0.50709,0.50709, 0.67612,-2.36643],
-                                                [0.76772, 0.60609, 0.12122,-2.82843],
+                                                        [0.76772, 0.60609, 0.12122,-2.82843],
                                                 [-0.35857,0.59761,-0.71714, 0],
                                                 [ 0,      0,       0,       1]])))
 
@@ -1000,7 +1000,7 @@ class TestView(unittest.TestCase):
         
         self.assertEqual(c.hsize, 160)
         self.assertEqual(c.vsize, 120)
-        self.assertEqual(c.field, math.pi/2)
+        self.assertAlmostEqual(c.field, math.pi/2)
         self.assertTrue(c.transform.equal( mytuple.Matrix.Id()))
 
     def test_camera_pixelsize(self):

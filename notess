@@ -1,0 +1,134 @@
+def canvastoppm(canvas: Canvas, filename: str):
+    with open(filename, "w+") as ppmfile:
+        ppmfile.write("P3\n"+ str(canvas.width) +" "+ str(canvas.height)+ "\n255\n")
+
+        for y in range(canvas.height):
+            line = ""
+            for x in range(canvas.width):
+                scaledcol = 255 * canvas.grid[x][y]
+                scaledcol.red= round( max(0, min(scaledcol.red, 255)))
+                scaledcol.green= round(max(0, min(scaledcol.green, 255)))
+                scaledcol.blue= round(max(0, min(scaledcol.blue, 255)))
+
+		
+		if n +len(strred)>=70:
+                        ppmfile.write("\n")
+                        n=0
+                n+=len(strred)
+                ppmfile.write(strred+" ")
+		if n +len(strgreen)>=70:
+                    ppmfile.write("\n")
+                    n=0
+                n+=len(strgreen)
+                ppmfile.write(strgreen+" ")
+
+                if n +len(strred)>=70:
+                    ppmfile.write("\n")
+                    n=0
+                n+=len(strred)
+                ppmfile.write(strred+" ")
+
+
+
+                ppmfile.write(f"{scaledcol.red} {scaledcol.green} {scaledcol.blue} ")
+                
+
+                
+            ppmfile.write("\n")
+            
+            
+            
+            
+# #Matrix empty init
+# class Matrix:
+#     def __init__(self, mrows=4, ncolumns=4 ):
+#         self.mrows = mrows
+#         self.ncolumns = ncolumns
+#         self.grid = [[0]*ncolumns  for _ in range(mrows)]
+
+#     def __getitem__(self, tupla):
+#         i,j = tupla
+#         return self.grid[i][j]
+
+#     def __repr__(self):
+#         output= "Matrix: \n"
+#         for i in range(self.mrows):
+#             output += ('|'+ ' |'.join(map(lambda elem: f'{elem: 8.6g}',
+#                                                           self.grid[i])) + '|\n')
+#         return output
+
+#     def __setitem__(self, tupla, value):
+#         i,j = tupla
+#         self.grid[i][j] = value
+
+#     def __eq__(self, other):
+#         equal = True
+#         for i in range(self.mrows):
+#             for j in range(self.ncolumns):
+#                 equal &= math.isclose(self.grid[i][j],other.grid[i][j])
+#         return equal
+
+#     def __mul__(self, other):
+#         if other.__class__==Matrix:
+#             M = Matrix(self.mrows, other.ncolumns)
+#             for i in range(self.mrows):
+#                 for j in range(other.ncolumns):
+#                     #prodotto righe per colonne
+#                     M[i,j] = sum([self[i,_]*other[_,j] for _ in range(self.ncolumns)])
+#             return M
+#         elif other.__class__==MyTuple: #solo matrici 4x4
+#             x,y,z,w = self[0,:]
+#             a = MyTuple.dot(MyTuple(x,y,z,w), other)
+#             x,y,z,w = self[1,:]
+#             b = MyTuple.dot(MyTuple(x,y,z,w), other)
+#             x,y,z,w = self[2,:]
+#             c = MyTuple.dot(MyTuple(x,y,z,w), other)
+#             x,y,z,w = self[3,:]
+#             d = MyTuple.dot(MyTuple(x,y,z,w), other)
+#             return MyTuple(a,b,c,d)
+
+
+
+
+
+
+(esteco22) pippo@pippovbox:~/esteco22$ python -m cProfile -s tottime scene_prova.py
+
+..............................................................................
+
+         59687394 function calls (59685122 primitive calls) in 28.217 seconds
+   Ordered by: internal time
+
+   ncalls    tottime  percall  cumtime  percall filename:lineno(function)
+  1903176      5.045    0.000   10.660    0.000 linalg.py:2104(det)
+  3806352      4.675    0.000    4.675    0.000 {built-in method numpy.asarray}
+  1903176      1.576    0.000    2.792    0.000 linalg.py:135(_commonType)
+  1903176      1.544    0.000   18.676    0.000 mytuple.py:298(det)
+   922752      1.208    0.000    4.088    0.000 mytuple.py:288(<listcomp>)
+
+
+        441729278 function calls (394205278 primitive calls) in 116.932 seconds
+
+   Ordered by: internal time
+
+   ncalls       tottime  percall  cumtime percall filename:lineno(function)
+20358216/1903176  19.290  0.000  128.187   0.000   mytuple.py:298(det)
+179704000       19.012    0.000   19.012    0.000  mytuple.py:237(__getitem__)
+ 19377792       16.392    0.000   47.249    0.000  mytuple.py:288(<listcomp>)
+ 19377792       12.172    0.000   87.420    0.000  mytuple.py:287(submatrix)
+ 19497780       11.569    0.000   15.756    0.000  mytuple.py:230(checkvalidity)
+
+
+..............................................................................
+con det numpy
+0:00:00.154613 (h:min:sec._)  --> risoluzione 10x5 
+0:00:00.653695 (h:min:sec._)  --> risoluzione 20x10 
+0:00:02.503379 (h:min:sec._)  --> risoluzione 40x20 
+0:00:09.926233 (h:min:sec._)  --> risoluzione 80x40 
+0:00:17.347147 (h:min:sec._)  --> risoluzione 100x50 
+0:01:06.516376 (h:min:sec._)  --> risoluzione 200x100 
+0:02:35.933228 (h:min:sec._)  --> risoluzione 300x150 
+0:04:36.001190 (h:min:sec._)  --> risoluzione 400x200 
+0:08:23.496855 (h:min:sec._)  --> risoluzione 500x250 
+
+

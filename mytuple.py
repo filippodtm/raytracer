@@ -299,16 +299,10 @@ class Matrix:
         assert(self.mrows == self.ncolumns)
         if self.mrows ==1:
                 return self[0,0]
-        elif self.mrows ==2:
-                return self[0,0]*self[1,1] - self[1,0]*self[0,1]
+        # elif self.mrows ==2:
+        #         return self[0,0]*self[1,1] - self[1,0]*self[0,1]
         else:
             return numpy.linalg.det(numpy.asarray(self.__data))
-            
-        #     det=0
-        #     # print(self.__data)
-        #     for j in range(self.ncolumns):
-        #         det += self[0,j]* self.cofactor(0,j)
-        # return det
 
     def invertible(self):
         return not(math.isclose(self.det(),0))

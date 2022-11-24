@@ -1,5 +1,7 @@
 import math
 from math import pi
+from datetime import datetime
+
 from mytuple import *
 from mycolor import *
 from myworld import *
@@ -51,8 +53,25 @@ w.lightsource = pointlight(Point(-10, 10, -10), Color(1,1,1))
 
 
 
-camera = Camera(100, 50, pi/3)
-camera.transform = Matrix.viewtransform(Point(0, 1.5, -5), Point(0,1,0), Vector(0,1,0))
-                                                       #
-canvas = camera.render(w)
-canvastoppm(canvas, 'scene1.ppm')
+def scene_prova(n):
+    start = datetime.now()
+    
+    camera = Camera(2*n, n, pi/3)
+    camera.transform = Matrix.viewtransform(Point(0, 1.5, -5), Point(0,1,0), Vector(0,1,0))
+    canvas = camera.render(w)
+    canvastoppm(canvas, 'scene1.ppm')
+
+    print(f"{ datetime.now()-start } (h:min:sec._)  --> risoluzione {2*n}x{n} ")
+    return datetime.now()-start
+
+
+
+################################################################################
+
+
+
+
+# va solo quando voglio eseguire questo file
+if __name__ == '__main__':
+
+    scene_prova(10)
