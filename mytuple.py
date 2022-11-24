@@ -1,4 +1,6 @@
 import math
+import numpy
+
 
 EPSILON = 1e-09
 
@@ -300,11 +302,13 @@ class Matrix:
         elif self.mrows ==2:
                 return self[0,0]*self[1,1] - self[1,0]*self[0,1]
         else:
-            det=0
-            #print(self.__data)
-            for j in range(self.ncolumns):
-                det += self[0,j]* self.cofactor(0,j)
-        return det
+            return numpy.linalg.det(numpy.asarray(self.__data))
+            
+        #     det=0
+        #     # print(self.__data)
+        #     for j in range(self.ncolumns):
+        #         det += self[0,j]* self.cofactor(0,j)
+        # return det
 
     def invertible(self):
         return not(math.isclose(self.det(),0))

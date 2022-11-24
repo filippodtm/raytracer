@@ -181,12 +181,14 @@ class World:
             res.extend( r.inters(elem))  # lista di intersections
         return sorted(res, key= lambda x: x.t)
 
-    def shade_hit(self, comps: dict):
-        # aus(solo per multiple lights)#
-        inshadow = self.isinshadow(comps['point']) #non basta
+    def shade_hit(self, comps: dict):#(qui per multiple lights)#
+        inshadow = self.isinshadow(comps['pointover']) #usa 'pointover'
         
-        return lighting(comps['obj'].material, self.lightsource,
-                        comps['point'], comps['eyev'], comps['normal'], inshadow)
+        return lighting(comps['obj'].material,
+                        self.lightsource,
+                        comps['pointover'],
+                        comps['eyev'],
+                        comps['normal'], inshadow)
                         # -> color at the intersection given by comps
 
     def colorat(self, r: ray):   #finale

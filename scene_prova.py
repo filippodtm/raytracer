@@ -51,7 +51,7 @@ w.lightsource = pointlight(Point(-10, 10, -10), Color(1,1,1))
 
 
 
-camera = Camera(200, 100, pi/3)
+camera = Camera(100, 50, pi/3)
 camera.transform = Matrix.viewtransform(Point(0, 1.5, -5), Point(0,1,0), Vector(0,1,0))
                                                        #
 canvas = camera.render(w)

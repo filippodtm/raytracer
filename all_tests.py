@@ -243,7 +243,7 @@ class Matrixtest(unittest.TestCase):
         A = mytuple.Matrix([[1,2,3,4],[5,6,7,8],[9,8,7,6],[5,4,3,2]])
         B = mytuple.Matrix([[1,2,3,4],[5,6,7,8],[9,8,7,6],[5,4,3,2]])
 
-        self.assertEqual(A.equal(B), True)
+        self.assertTrue(A.equal(B))
 
     def test_notequalmatrix(self):
         A = mytuple.Matrix([[1,2,3,4],
@@ -255,7 +255,7 @@ class Matrixtest(unittest.TestCase):
                             [8,7,6,5],
                             [4,3,2,1]])
 
-        self.assertEqual(A.equal(B), False)
+        self.assertFalse(A.equal(B))
 
     def test_matrixmult(self):
         A = mytuple.Matrix([[1,2,3,4],
@@ -312,7 +312,7 @@ class Matrixtest(unittest.TestCase):
     def test_2x2determinant(self):
         A = mytuple.Matrix([[1,5],[-3,2]])
 
-        self.assertEqual(A.det(), 17)
+        self.assertAlmostEqual(A.det(), 17)
         
     def test_submatrix(self):
         A= mytuple.Matrix([[ 1,5,0],
@@ -333,49 +333,49 @@ class Matrixtest(unittest.TestCase):
                            [6,-1,5]])
         B = A.submatrix(1,0)
         
-        self.assertEqual(B.det(), 25)
-        self.assertEqual(A.minor(1,0), 25)
+        self.assertAlmostEqual(B.det(), 25)
+        self.assertAlmostEqual(A.minor(1,0), 25)
 
-        self.assertEqual(A.cofactor(1,0),-25)
+        self.assertAlmostEqual(A.cofactor(1,0),-25)
 
-        self.assertEqual(A.minor(0,0),  -12)
-        self.assertEqual(A.cofactor(0,0),-12)
+        self.assertAlmostEqual(A.minor(0,0),  -12)
+        self.assertAlmostEqual(A.cofactor(0,0),-12)
         
     def test_3x3determinant(self):
         A = mytuple.Matrix([[1, 2,6],
                             [-5,8,-4],
                             [2, 6, 4]])
-        self.assertEqual(A.cofactor(0,0), 56)
-        self.assertEqual(A.cofactor(0,1), 12)
-        self.assertEqual(A.cofactor(0,2),-46)
+        self.assertAlmostEqual(A.cofactor(0,0), 56)
+        self.assertAlmostEqual(A.cofactor(0,1), 12)
+        self.assertAlmostEqual(A.cofactor(0,2),-46)
 
-        self.assertEqual(A.det(),-196)
+        self.assertAlmostEqual(A.det(),-196)
 
     def test_4x4determinant(self):
         A = mytuple.Matrix([[-2,-8,3,5],
                             [-3, 1,7,3],
                             [1, 2,-9,6],
                             [-6,7,7,-9]])
-        self.assertEqual(A.cofactor(0,0), 690)
-        self.assertEqual(A.cofactor(0,1), 447)
-        self.assertEqual(A.cofactor(0,2), 210)
-        self.assertEqual(A.cofactor(0,3), 51)
+        self.assertAlmostEqual(A.cofactor(0,0), 690)
+        self.assertAlmostEqual(A.cofactor(0,1), 447)
+        self.assertAlmostEqual(A.cofactor(0,2), 210)
+        self.assertAlmostEqual(A.cofactor(0,3), 51)
 
-        self.assertEqual(A.det(),-4071)
+        self.assertAlmostEqual(A.det(),-4071)
 
     def test_isinvertible(self):
         A = mytuple.Matrix([[6,4,4,4],
                             [5,5,7,6],
                             [4,-9,3,-7],
                             [9,1,7,-6]])
-        self.assertEqual(A.det(),-2120)
+        self.assertAlmostEqual(A.det(),-2120)
         self.assertEqual(A.invertible(), True)
         
         B = mytuple.Matrix([[-4,2,-2,-3],
                             [9, 6, 2,6],
                             [0,-5,1,-5],
                             [0, 0, 0,0]])
-        self.assertEqual(B.det(), 0)
+        self.assertAlmostEqual(B.det(), 0)
         self.assertEqual(B.invertible(),False)
 
     def test_inverting(self):
@@ -388,12 +388,12 @@ class Matrixtest(unittest.TestCase):
                             [-0.80827,-1.45677,-0.44361, 0.52068],
                             [-0.07895,-0.22368,-0.05263, 0.19737],
                             [-0.52256,-0.81391,-0.30075, 0.30639]])
-        self.assertEqual(A.det(), 532)
+        self.assertAlmostEqual(A.det(), 532)
 
-        self.assertEqual(A.cofactor(2,3), -160)
+        self.assertAlmostEqual(A.cofactor(2,3), -160)
         self.assertEqual(math.isclose(B[3,2],-160/532), True)
         
-        self.assertEqual(A.cofactor(3,2), 105)
+        self.assertAlmostEqual(A.cofactor(3,2), 105)
         self.assertEqual(math.isclose(B[2,3], 105/532), True)
         
         self.assertEqual(C.equal(B.round()), True)
@@ -1096,7 +1096,7 @@ class ShadowsTest(unittest.TestCase):
         comps= myworld.precomp(i,r)
         c = w.shade_hit(comps)
         self.assertEqual(c, mycolor.Color(0.1, 0.1, 0.1))
-        # funziona ma visivamente, acne sull'immagine
+        # funziona ma visivamente fa acne sull'immagine
 
     def test_thehit_offsetthepoint(self): #evitare acne
         r = myworld.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
@@ -1107,3 +1107,9 @@ class ShadowsTest(unittest.TestCase):
 
         self.assertLess( comps['pointover'].z , -mytuple.EPSILON/2)
         self.assertLess( comps['pointover'].z , comps['point'].z)
+
+
+
+
+
+    
