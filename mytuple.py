@@ -166,10 +166,10 @@ def trajectory(g, wind, x0, v0):
 class Matrix:
     @staticmethod
     def createzeros(m,n):
-        return numpy.zeros((m,n))
+        return Matrix(numpy.zeros((m,n)))
 
     def Id():
-        return numpy.identity(n)
+        return Matrix(numpy.identity(4))
     
     @staticmethod
     def translation(x,y,z):
@@ -234,6 +234,7 @@ class Matrix:
         for i in range(m):
             assert(len(grid[i])==n)
 
+            
     def __getitem__(self, tupla):
         i,j = tupla
         return self.__data[i,j]
@@ -241,19 +242,13 @@ class Matrix:
     def __repr__(self):
         return "Matrix: \n" + numpy.array_str(self.__data) #oppure array_repr()
 
-
-        # output= "Matrix: \n"    
-        # for i in range(self.mrows):
-        #     output += ('|'+ ' |'.join(map(lambda elem: f'{elem: 9.8g}',
-        #                                                   self.__data[i])) + '|\n')
-        # return output
-
     def __setitem__(self, tupla, value):
         i,j = tupla
         self.__data[i,j] = value
     
     def equal(self,other):
-        return (self.__data==other.__data).all()
+        return numpy.array([[math.isclose(self[i,j], other[i,j])  for j in range(self.ncolumns)]
+                                                                  for i in range(self.mrows)]).all()
 
     def round(self):
         return Matrix([[ round(self[i,j],ndigits=5)  for j in range(self.ncolumns)]
@@ -262,72 +257,49 @@ class Matrix:
     def __mul__(self, other): #solo matrici 4x4
         if other.__class__==Matrix:
             return Matrix( self.__data @ other.__data)
-            # return Matrix([[ sum([self[i,_]*other[_,j] for _ in range(self.ncolumns)])
-            #                  #prodotto righe per colonne
-            #                  for j in range(other.ncolumns)]
-            #                   for i in range(self.mrows) ])
         
-        elif other.__class__ in (MyTuple, Point,Vector):
+        elif other.__class__ in (MyTuple, Point,Vector):  #intanto
             a = []
             for i in range(4):
-                a.append( first[i,0]*other.x + first[i,1]*other.y + first[i,2]*other.z + first[i,3]*other.w)
+                a.append( self[i,0]*other.x + self[i,1]*other.y + self[i,2]*other.z + self[i,3]*other.w)
             return create_tuple(a[0], a[1], a[2], a[3])
 
-
-        ##
     def transpose(self):
-        return Matrix([[self[i,j] for i in range(self.mrows)]
-                                  for j in range(self.ncolumns)])
+        return Matrix(self.__data.transpose())
     
     def submatrix(self, i0,j0):
-        return Matrix([[self[i,j] for j in range(self.ncolumns) if j!=j0]
-                                     for i in range(self.mrows) if i!=i0])
+        return Matrix([[self.__data[i,j] for j in range(self.ncolumns) if j!=j0]
+                                       for i in range(self.mrows) if i!=i0])
 
     def minor(self, i0, j0):
         return Matrix.det(self.submatrix(i0,j0))
 
     def cofactor(self, i,j):
         return (-1)**(i+j) * self.minor(i,j)
-
     
     def det(self):
-        assert(self.mrows == self.ncolumns)
-        if self.mrows ==1:
-                return self[0,0]
-        # elif self.mrows ==2:
-        #         return self[0,0]*self[1,1] - self[1,0]*self[0,1]
-        else:
-            return numpy.linalg.det(numpy.asarray(self.__data))
+            return numpy.linalg.det(self.__data)
 
     def invertible(self):
+        assert(self.mrows == self.ncolumns)
         return not(math.isclose(self.det(),0))
 
     def inverse(self):
-        assert(self.invertible()==True)
-        inv = Matrix([[ self.cofactor(i,j)/ self.det()  for j in range(self.ncolumns)]
-                                                         for i in range(self.mrows) ])
-        inv = inv.transpose()
-        return inv
+        inv = numpy.linalg.inv(self.__data)
+        return Matrix(inv)
 
 
 
 
 
-A = Matrix([[1,0], [0,1]])
-B = Matrix([[-2,1,1,2], [3,2,1,-1]])
-B[1,1] = 23234
-C = A*B
-print(B[1,1])
-print(B)
-#a = self[0,0]*other.x + self[0,1]*other.y + self[0,2]*other.z + self[0,3]*other.w
-
-
-
-
-
-
-
-
-
-
+# A = Matrix([[1,0], [0,1]])
+# B = Matrix([[0,1,2,3],
+#             [1,0,5,0],
+#             [2,5,0,6],
+#             [3,0,6,0]])
+# print(Matrix.equal(A, A.transpose() ))
+# #B[1,1] = 23234
+# # C = A*B
+# print(B[1,1])
+# print(B.submatrix(0,2))
 

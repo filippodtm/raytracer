@@ -418,7 +418,7 @@ class Matrixtest(unittest.TestCase):
                             [-0.07778, 0.03333, 0.36667, -0.33333],
                             [-0.02901,-0.14630, -0.10926, 0.12963],
                             [ 0.17778, 0.06667, -0.26667, 0.33333]])
-        self.assertTrue(C.equal( A.inverse().round() ))
+        self.assertTrue(C2.equal( A2.inverse().round() ))
 
     def test_multinverse(self):
         A = mytuple.Matrix([[3,-9,7,3],
@@ -432,7 +432,7 @@ class Matrixtest(unittest.TestCase):
         C = A*B
         self.assertTrue(A.equal( C*(B.inverse()) ))
 
-
+        
 
 
 class Transformationstest(unittest.TestCase):
@@ -549,6 +549,8 @@ class RayTest(unittest.TestCase):
 
         self.assertEqual(r.origin, origin)
         self.assertEqual(r.direction, direction)
+
+
 
     def test_computepoint(self):
         r = myworld.ray(mytuple.Point(2,3,4), mytuple.Vector(1,0,0))
