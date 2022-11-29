@@ -166,11 +166,11 @@ def trajectory(g, wind, x0, v0):
 class Matrix:
     @staticmethod
     def createzeros(m,n):
-        return Matrix( [[0]*n for _ in range(m)] )
+        return numpy.zeros((m,n))
 
     def Id():
-        return Matrix([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
-
+        return numpy.identity(n)
+    
     @staticmethod
     def translation(x,y,z):
         return Matrix([[1,0,0,x],
@@ -223,63 +223,58 @@ class Matrix:
     def __init__(self, grid):
         self.checkvalidity(grid) #ha self ma non dipende da self
         
-        self.__data = grid
+        self.__data = numpy.array(grid)
         self.mrows = len(self.__data)
         self.ncolumns = len(self.__data[0])
 
     @staticmethod
     def checkvalidity(grid):
         m = len(grid)
-        n = len(grid)
+        n = len(grid[0])
         for i in range(m):
             assert(len(grid[i])==n)
 
     def __getitem__(self, tupla):
         i,j = tupla
-        return self.__data[i][j]
+        return self.__data[i,j]
 
     def __repr__(self):
-        output= "Matrix: \n"
-        for i in range(self.mrows):
-            output += ('|'+ ' |'.join(map(lambda elem: f'{elem: 9.8g}',
-                                                          self.__data[i])) + '|\n')
-        return output
+        return "Matrix: \n" + numpy.array_str(self.__data) #oppure array_repr()
+
+
+        # output= "Matrix: \n"    
+        # for i in range(self.mrows):
+        #     output += ('|'+ ' |'.join(map(lambda elem: f'{elem: 9.8g}',
+        #                                                   self.__data[i])) + '|\n')
+        # return output
 
     def __setitem__(self, tupla, value):
         i,j = tupla
-        self.__data[i][j] = value
+        self.__data[i,j] = value
     
     def equal(self,other):
-        res = True
-        for i in range(self.mrows):
-            for j in range(self.ncolumns):
-                res &= math.isclose(self.__data[i][j], other.__data[i][j])
-        return res
-    
+        return (self.__data==other.__data).all()
+
     def round(self):
         return Matrix([[ round(self[i,j],ndigits=5)  for j in range(self.ncolumns)]
                                                      for i in range(self.mrows)])
 
-    
     def __mul__(self, other): #solo matrici 4x4
         if other.__class__==Matrix:
-            return Matrix([[ sum([self[i,_]*other[_,j] for _ in range(self.ncolumns)])
-                             #prodotto righe per colonne
-                             for j in range(other.ncolumns)]
-                              for i in range(self.mrows) ])
+            return Matrix( self.__data @ other.__data)
+            # return Matrix([[ sum([self[i,_]*other[_,j] for _ in range(self.ncolumns)])
+            #                  #prodotto righe per colonne
+            #                  for j in range(other.ncolumns)]
+            #                   for i in range(self.mrows) ])
         
         elif other.__class__ in (MyTuple, Point,Vector):
-            x,y,z,w = self[0,:]
-            a = MyTuple.dot(create_tuple(x,y,z,w), other)
-            x,y,z,w = self[1,:]
-            b = MyTuple.dot(create_tuple(x,y,z,w), other)
-            x,y,z,w = self[2,:]
-            c = MyTuple.dot(create_tuple(x,y,z,w), other)
-            x,y,z,w = self[3,:]
-            d = MyTuple.dot(create_tuple(x,y,z,w), other)
-            
-            return create_tuple(a,b,c,d)
+            a = []
+            for i in range(4):
+                a.append( first[i,0]*other.x + first[i,1]*other.y + first[i,2]*other.z + first[i,3]*other.w)
+            return create_tuple(a[0], a[1], a[2], a[3])
 
+
+        ##
     def transpose(self):
         return Matrix([[self[i,j] for i in range(self.mrows)]
                                   for j in range(self.ncolumns)])
@@ -315,8 +310,15 @@ class Matrix:
         return inv
 
 
-    
-# B = Matrix([[-2,1,2,3], [3,2,1,-1]])
+
+
+
+A = Matrix([[1,0], [0,1]])
+B = Matrix([[-2,1,1,2], [3,2,1,-1]])
+B[1,1] = 23234
+C = A*B
+print(B[1,1])
+print(B)
 #a = self[0,0]*other.x + self[0,1]*other.y + self[0,2]*other.z + self[0,3]*other.w
 
 

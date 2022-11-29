@@ -120,7 +120,8 @@ def canvastoppm(canvas: Canvas, filename: str):
 
 
 ..............................................................................
-con det numpy
+
+con det numpy, floor leftwall middle left
 0:00:00.154613 (h:min:sec._)  --> risoluzione 10x5 
 0:00:00.653695 (h:min:sec._)  --> risoluzione 20x10 
 0:00:02.503379 (h:min:sec._)  --> risoluzione 40x20 
@@ -131,4 +132,26 @@ con det numpy
 0:04:36.001190 (h:min:sec._)  --> risoluzione 400x200 
 0:08:23.496855 (h:min:sec._)  --> risoluzione 500x250 
 
+
+0:00:00.191394 (h:min:sec._)  --> risoluzione 10x5 
+0:00:00.823126 (h:min:sec._)  --> risoluzione 20x10 
+0:00:03.144489 (h:min:sec._)  --> risoluzione 40x20 
+0:00:22.482814 (h:min:sec._)  --> risoluzione 100x50 
+0:01:19.179135 (h:min:sec._)  --> risoluzione 200x100 
+0:05:30.503283 (h:min:sec._)  --> risoluzione 400x200 
+0:12:54.140794 (h:min:sec._)  --> risoluzione 600x300 
+0:31:00.070235 (h:min:sec._)  --> risoluzione 1000x500 
+
+
+con det numpy, floor middle
+ 0:00:00.087167 (h:min:sec._)  --> risoluzione 5x10 
+ 0:00:00.474101 (h:min:sec._)  --> risoluzione 10x20 
+ 0:00:01.843536 (h:min:sec._)  --> risoluzione 20x40 
+ 0:00:09.123374 (h:min:sec._)  --> risoluzione 50x100 
+ 0:00:36.393461 (h:min:sec._)  --> risoluzione 100x200 
+ 0:02:52.441515 (h:min:sec._)  --> risoluzione 200x400 
+ 0:05:57.387858 (h:min:sec._)  --> risoluzione 300x600 
+#2:09:15.902852 (h:min:sec._)  --> risoluzione 500x1000 
+ 0:34:43.950354 (h:min:sec._)  --> risoluzione 700x1400 
+ 0:57:04.516518 (h:min:sec._)  --> risoluzione 1000x2000 
 
