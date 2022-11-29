@@ -1,6 +1,7 @@
 import math
 from math import pi
 from datetime import datetime
+import sys
 
 from mytuple import *
 from mycolor import *
@@ -47,22 +48,22 @@ left.material.color = Color(1, .4, .1) #
 left.material.diffuse = 0.7
 left.material.specular = 0.5 #
 
-w.obj = [floor, leftwall,   middle,   left]
+
+w.obj = [floor,   middle]
 w.lightsource = pointlight(Point(-10, 10, -10), Color(1,1,1))
 
 
 
-
-def scene_prova(n):
+def scene1(n):
     start = datetime.now()
     
-    camera = Camera(2*n, n, pi/3)
+    camera = Camera(n, round(3/4*n), pi/3)
     camera.transform = Matrix.viewtransform(Point(0, 1.5, -5), Point(0,1,0), Vector(0,1,0))
     canvas = camera.render(w)
-    canvastoppm(canvas, 'scene1.ppm')
+    canvastoppm(canvas, 'scene_1.ppm')
 
-    print(f"{ datetime.now()-start } (h:min:sec._)  --> risoluzione {2*n}x{n} ")
-    return datetime.now()-start
+    print(f"{ datetime.now()-start } (h:min:sec._)   ------>  risoluzione {n}x{int(3/4*n)}   ")
+    return (datetime.now()-start).total_seconds()
 
 
 
@@ -71,7 +72,9 @@ def scene_prova(n):
 
 
 
-# va solo quando voglio eseguire questo file
+# solo quando voglio eseguire questo file
 if __name__ == '__main__':
-
-    scene_prova(10)
+    
+    input1 = int(sys.argv[1])
+    
+    scene1(input1)

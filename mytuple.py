@@ -236,8 +236,8 @@ class Matrix:
 
             
     def __getitem__(self, tupla):
-        i,j = tupla
-        return self.__data[i,j]
+        # i,j = tupla
+        return self.__data[tupla]
 
     def __repr__(self):
         return "Matrix: \n" + numpy.array_str(self.__data) #oppure array_repr()
