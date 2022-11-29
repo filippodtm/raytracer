@@ -47,7 +47,7 @@ left.material.color = Color(1, .4, .1) #
 left.material.diffuse = 0.7
 left.material.specular = 0.5 #
 
-w.obj = [floor, leftwall,   middle,   left]
+w.obj = [floor,   middle]
 w.lightsource = pointlight(Point(-10, 10, -10), Color(1,1,1))
 
 
@@ -61,7 +61,7 @@ def scene_prova(n):
     canvas = camera.render(w)
     canvastoppm(canvas, 'scene1.ppm')
 
-    print(f"{ datetime.now()-start } (h:min:sec._)  --> risoluzione {2*n}x{n} ")
+    print(f"{ datetime.now()-start } (h:min:sec._)  --> risoluzione {n}x{2*n} ")
     return datetime.now()-start
 
 

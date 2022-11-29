@@ -47,7 +47,6 @@ class MyTuple:
                        self.z- other.z, self.w - other.w)
     def __neg__(self):
         return create_tuple(0,0,0,0) -self
-
     
     def __mul__(self, c):
         return create_tuple(self.x *c, self.y*c, self.z*c, self.w*c)
@@ -60,8 +59,8 @@ class MyTuple:
         return create_tuple(self.x/scalar, self.y/scalar, self.z/scalar,
                        self.w/scalar)
 
-    def dot(self, other):
-        return self.x *other.x + self.y *other.y +self.z *other.z + self.w *other.w
+    # def dot(self, other):
+    #     return self.x *other.x + self.y *other.y +self.z *other.z + self.w *other.w
     
 
     
@@ -163,169 +162,123 @@ def trajectory(g, wind, x0, v0):
 
 
 
-class Matrix:
-    @staticmethod
-    def createzeros(m,n):
-        return Matrix( [[0]*n for _ in range(m)] )
 
-    def Id():
-        return Matrix([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
 
-    @staticmethod
-    def translation(x,y,z):
-        return Matrix([[1,0,0,x],
+
+
+
+
+
+
+
+#class Matrix:
+    #numpy.zeros((n,m))
+    #numpy.identity(n)
+    
+def translation(x,y,z):
+        return numpy.array([[1,0,0,x],
                        [0,1,0,y],
                        [0,0,1,z],
                        [0,0,0,1]])
-    @staticmethod
-    def scaling(x,y,z):
-        return Matrix([[x,0,0,0],[0,y,0,0],[0,0,z,0],[0,0,0,1]])
+def scaling(x,y,z):
+        return numpy.array([[x,0,0,0],[0,y,0,0],[0,0,z,0],[0,0,0,1]])
     
-    @staticmethod
-    def xrotation(r):
-        return Matrix([[1, 0, 0, 0],
-                       [0,math.cos(r),-math.sin(r),0],
-                       [0,math.sin(r), math.cos(r),0],
-                       [0, 0, 0, 1]])
-    @staticmethod
-    def yrotation(r):
-        return Matrix([[ math.cos(r),0,math.sin(r),0],
+def xrotation(r):
+        return numpy.array([[1, 0, 0, 0],
+                            [0,math.cos(r),-math.sin(r),0],
+                            [0,math.sin(r), math.cos(r),0],
+                            [0, 0, 0, 1]])
+def yrotation(r):
+        return numpy.array([[ math.cos(r),0,math.sin(r),0],
                        [0,1,0,0],
                        [-math.sin(r),0,math.cos(r),0],
                        [0, 0, 0, 1]])
-    @staticmethod
-    def zrotation(r):
-        return Matrix([[math.cos(r),-math.sin(r),0,0],
+def zrotation(r):
+        return numpy.array([[math.cos(r),-math.sin(r),0,0],
                        [math.sin(r), math.cos(r),0,0],
                        [0, 0, 1, 0],
                        [0, 0, 0, 1]])
-    @staticmethod
-    def shear(x2,x3,y1,y3,z1,z2):
-        return Matrix([[1, x2,x3,0],
+def shear(x2,x3,y1,y3,z1,z2):
+        return numpy.array([[1, x2,x3,0],
                        [y1,1, y3,0],
                        [z1,z2, 1,0],
                        [0, 0, 0, 1]])
 
-    @staticmethod
-    def viewtransform(from0, to, up):
+def viewtransform(from0, to, up):
         forward = Vector.normalize(to-from0)
         upnormal = up.normalize()
         left = Vector.cross(forward,upnormal)
         trueup= Vector.cross(left, forward)
 
-        orientation = Matrix([[left.x, left.y, left.z, 0],
-                              [trueup.x, trueup.y, trueup.z, 0],
-                              [-forward.x, -forward.y, -forward.z, 0],
-                              [0,  0,  0,  1]])
-        return orientation * Matrix.translation(-from0.x, -from0.y, -from0.z)
+        orientation = numpy.array([[left.x, left.y, left.z, 0],
+                                   [trueup.x, trueup.y, trueup.z, 0],
+                                   [-forward.x, -forward.y, -forward.z, 0],
+                                   [0,  0,  0,  1]])
+        return orientation * translation(-from0.x, -from0.y, -from0.z)
     
+
+    # np.array_equal(arr, arr1)
+    # print((arr == arr1).all())
+    # arr2 = np.allclose(arr, arr1)
+    # np.array_equiv(arr, arr1)
+
+def round5(matrix):
+        return numpy.array([[ round(matrix[i,j],ndigits=5)  for j in range(matrix.shape[0]) ]
+                                                            for i in range(matrix.shape[0]) ])
+
+
+def dot(first, other: MyTuple):
     
-    def __init__(self, grid):
-        self.checkvalidity(grid) #ha self ma non dipende da self
-        
-        self.__data = grid
-        self.mrows = len(self.__data)
-        self.ncolumns = len(self.__data[0])
+        if first.__class__ == numpy.ndarray:   # (solo matrici 4x4)
+            a = []        
+            for i in range(4):
+                a.append( first[i,0]*other.x + first[i,1]*other.y + first[i,2]*other.z + first[i,3]*other.w)
+            return create_tuple(a[0], a[1], a[2], a[3])
 
-    @staticmethod
-    def checkvalidity(grid):
-        m = len(grid)
-        n = len(grid)
-        for i in range(m):
-            assert(len(grid[i])==n)
-
-    def __getitem__(self, tupla):
-        i,j = tupla
-        return self.__data[i][j]
-
-    def __repr__(self):
-        output= "Matrix: \n"
-        for i in range(self.mrows):
-            output += ('|'+ ' |'.join(map(lambda elem: f'{elem: 9.8g}',
-                                                          self.__data[i])) + '|\n')
-        return output
-
-    def __setitem__(self, tupla, value):
-        i,j = tupla
-        self.__data[i][j] = value
-    
-    def equal(self,other):
-        res = True
-        for i in range(self.mrows):
-            for j in range(self.ncolumns):
-                res &= math.isclose(self.__data[i][j], other.__data[i][j])
-        return res
-    
-    def round(self):
-        return Matrix([[ round(self[i,j],ndigits=5)  for j in range(self.ncolumns)]
-                                                     for i in range(self.mrows)])
-
-    
-    def __mul__(self, other): #solo matrici 4x4
-        if other.__class__==Matrix:
-            return Matrix([[ sum([self[i,_]*other[_,j] for _ in range(self.ncolumns)])
-                             #prodotto righe per colonne
-                             for j in range(other.ncolumns)]
-                              for i in range(self.mrows) ])
-        
-        elif other.__class__ in (MyTuple, Point,Vector):
-            x,y,z,w = self[0,:]
-            a = MyTuple.dot(create_tuple(x,y,z,w), other)
-            x,y,z,w = self[1,:]
-            b = MyTuple.dot(create_tuple(x,y,z,w), other)
-            x,y,z,w = self[2,:]
-            c = MyTuple.dot(create_tuple(x,y,z,w), other)
-            x,y,z,w = self[3,:]
-            d = MyTuple.dot(create_tuple(x,y,z,w), other)
+        if first.__class__ in (MyTuple, Point,Vector):
             
-            return create_tuple(a,b,c,d)
+            return first.x *other.x + first.y *other.y + first.z *other.z + first.w *other.w
 
-    def transpose(self):
-        return Matrix([[self[i,j] for i in range(self.mrows)]
-                                  for j in range(self.ncolumns)])
+
+
+    # def transpose(matrix):
+    #     return numpy.array([[self[i,j] for i in range(self.mrows)]
+    #                               for j in range(self.ncolumns)])
     
-    def submatrix(self, i0,j0):
-        return Matrix([[self[i,j] for j in range(self.ncolumns) if j!=j0]
-                                     for i in range(self.mrows) if i!=i0])
+    # def submatrix(self, i0,j0):
+    #     return Matrix([[self[i,j] for j in range(self.ncolumns) if j!=j0]
+    #                                  for i in range(self.mrows) if i!=i0])
 
-    def minor(self, i0, j0):
-        return Matrix.det(self.submatrix(i0,j0))
+    # def minor(self, i0, j0):
+    #     return Matrix.det(self.submatrix(i0,j0))
 
-    def cofactor(self, i,j):
-        return (-1)**(i+j) * self.minor(i,j)
+    # def cofactor(self, i,j):
+    #     return (-1)**(i+j) * self.minor(i,j)
 
-    
-    def det(self):
-        assert(self.mrows == self.ncolumns)
-        if self.mrows ==1:
-                return self[0,0]
-        # elif self.mrows ==2:
-        #         return self[0,0]*self[1,1] - self[1,0]*self[0,1]
-        else:
-            return numpy.linalg.det(numpy.asarray(self.__data))
+    # numpy.linalg.det(numpy.asarray(self.__data))
 
-    def invertible(self):
-        return not(math.isclose(self.det(),0))
+    # def invertible(self):
+    #     return not(math.isclose(self.det(),0))
 
-    def inverse(self):
-        assert(self.invertible()==True)
-        inv = Matrix([[ self.cofactor(i,j)/ self.det()  for j in range(self.ncolumns)]
-                                                         for i in range(self.mrows) ])
-        inv = inv.transpose()
-        return inv
+    # def inverse(self):
+    #     assert(self.invertible()==True)
+    #     inv = Matrix([[ self.cofactor(i,j)/ self.det()  for j in range(self.ncolumns)]
+    #                                                      for i in range(self.mrows) ])
+    #     inv = inv.transpose()
+    #     return inv
+
+
+
 
 
     
-# B = Matrix([[-2,1,2,3], [3,2,1,-1]])
-#a = self[0,0]*other.x + self[0,1]*other.y + self[0,2]*other.z + self[0,3]*other.w
-
-
-
-
-
-
-
-
-
-
-
+    
+# B = numpy.array([[-2,1,2,3.6567770989709897], [3,2,1,-1], [0,0,0,0], [6,7,8,9]])
+# print(B)
+# C =numpy.identity(4)
+# #print( C)
+# print(B @ numpy.identity(4))
+# # print(round5(B))
+# m = dot(B, MyTuple(1,2,3,4))
+# print(m)
+# #a = self[0,0]*other.x + self[0,1]*other.y + self[0,2]*other.z + self[0,3]*other.w
