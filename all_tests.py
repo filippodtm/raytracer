@@ -1114,4 +1114,25 @@ class ShadowsTest(unittest.TestCase):
 
 
 
-    
+
+
+class TestPlanes(unittest.TestCase):
+
+    def test_shapetransformation(self):
+        s = myworld.Shape()
+        self.assertTrue(s.transform.equal( mytuple.Matrix.Id()))
+
+        s.settransform( mytuple.Matrix.translation(2,3,4))
+        self.assertTrue(s.transform.equal( mytuple.Matrix.translation(2,3,4)))
+
+    def test_shapematerial(self):
+        S = myworld.Shape()
+        m = S.material                     #unica riga?
+        self.assertTrue(m.equal( myworld.Material()))  #the default material
+
+        s = myworld.Shape()
+        m = myworld.Material()
+        m.ambient = 1
+        s.material = m
+
+        self.assertTrue(s.material.equal( m))

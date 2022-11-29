@@ -1,5 +1,5 @@
 import math
-import mytuple  # for ray, sphere, lighting
+import mytuple  # ray, sphere, lighting
 import mycolor  # Material, light
 
 
@@ -34,7 +34,7 @@ def lighting(material: Material,
                   eye: mytuple.Vector,
                normal: mytuple.Vector,
              inshadow= False):
-    
+
     sourcev = mytuple.Vector.normalize(l.position - point)
     ambient = l.intensity * material.color * material.ambient
     if inshadow:
@@ -60,14 +60,21 @@ def lighting(material: Material,
 
 
 
-#SPHERE, RAY, INTERSECTIONS
+#SPHERE, RAY, INTERSECTIONS ##############################################################
 
-class sphere:
+
+class Shape:
     def __init__(self):
         self.transform = mytuple.Matrix.Id()
-        self.material  = Material()
+        self.material = Material()
+        # transform ray by inverse
+        # for normal, convert point to objsp, then normal* inv^T
+        
+
     def settransform(self, m: mytuple.Matrix):
         self.transform = m
+
+class sphere(Shape):
         
     def normal(self, p: mytuple.Point):
         p_wrtobj = self.transform.inverse() * p
@@ -79,7 +86,12 @@ class sphere:
     
     def equal(self,other):
         return self.transform.equal(other.transform) and self.material.equal(other.material)
-    
+
+
+
+
+
+
 
 class ray:
     def __init__(self, origin: mytuple.Point, direction: mytuple.Vector):
@@ -149,6 +161,11 @@ def precomp( i: intersection, r: ray):  #returns info on that intersection
 
     comps['pointover'] = comps['point']+ mytuple.EPSILON *comps['normal']
     return comps
+
+
+
+
+
 
 
 

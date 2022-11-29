@@ -17,11 +17,6 @@ class MyTuple:
     def is_vector(self):
         return math.isclose(self.w, 0)
 
-    # if self.is_point():        #non funzia
-    #     self.__class__ = Point
-    # elif self.is_vector():
-    #     self.__class__ = Vector
-
     def to_vector(self):
         if self.is_vector():
             return Vector(self.x, self.y, self.z)
