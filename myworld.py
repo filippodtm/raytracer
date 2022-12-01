@@ -65,31 +65,31 @@ def lighting(material: Material,
 
 class Shape:
     def __init__(self):
-        self.transform = mytuple.Matrix.Id()
+        self.transformation= mytuple.Matrix.Id()
         self.material = Material()
         # transform ray by inverse
         # for normal, convert point to objsp, then normal* inv^T
         
     def settransform(self, m: mytuple.Matrix):
-        self.transform = m
+        self.transformation= m
 
     def localintersect(self, localray):
         self.savedray = localray
-
+        #poi eventualmente il lavoro è nella localintersect di sphere/ecc
 
 
 class sphere(Shape):
         
-    def normal(self, p: mytuple.Point):
-        p_wrtobj = self.transform.inverse() * p
+    def normalat(self, p: mytuple.Point):
+        p_wrtobj = self.transformation.inverse() * p
         n_wrtobj = p_wrtobj - mytuple.Point(0,0,0)
-        n = self.transform.inverse().transpose() * n_wrtobj
+        n = self.transformation.inverse().transpose() * n_wrtobj
 
         n.w = 0   #serve se ho traslazioni
         return mytuple.Vector.normalize(n.to_vector())
     
     def equal(self,other):
-        return self.transform.equal(other.transform) and self.material.equal(other.material)
+        return self.transformation.equal(other.transformation) and self.material.equal(other.material)
 
     def localintersect(self, localray):
         """compute localray-sphere intersections, with possible transformations"""
@@ -128,7 +128,7 @@ class ray:
         return self.origin+ t* self.direction
 
     def inters(self, s: sphere):
-        localray = self.transform(s.transform.inverse())   
+        localray = self.transform(s.transformation.inverse())   
         return s.localintersect(localray)
 
 
@@ -162,7 +162,7 @@ def precomp( i: intersection, r: ray):  #returns info on that intersection
              'point':r.position(i.t),
              'eyev':-r.direction,
              'inside':False,
-             'normal':i.obj.normal( r.position(i.t)) }
+             'normal':i.obj.normalat( r.position(i.t)) }
 
     if comps['normal'].dot(comps['eyev']) < 0: #inside
         comps['inside'] =True
@@ -193,7 +193,7 @@ class World:
         s1.material.diffuse = 0.7
         s1.material.specular= 0.2
         s2 = sphere()
-        s2.transform = mytuple.Matrix.scaling(.5, .5, .5)
+        s2.transformation= mytuple.Matrix.scaling(.5, .5, .5)
 
         w = World()
         w.obj = [s1, s2]
@@ -255,7 +255,7 @@ class Camera:
         self.hsize = hsize
         self.vsize = vsize
         self.field = field
-        self.transform = mytuple.Matrix.Id()
+        self.transformation = mytuple.Matrix.Id()
 
         #pixelsize:
         half_view= math.tan(self.field /2)
@@ -275,8 +275,8 @@ class Camera:
         worldx = self.halfwidth - xoffset
         worldy = self.halfheight -yoffset
 
-        pixel = self.transform.inverse() * mytuple.Point(worldx, worldy, -1)
-        origin = self.transform.inverse() * mytuple.Point(0,0,0)
+        pixel = self.transformation.inverse() * mytuple.Point(worldx, worldy, -1)
+        origin = self.transformation.inverse() * mytuple.Point(0,0,0)
 
         return ray(origin, mytuple.Vector.normalize(pixel-origin))
 

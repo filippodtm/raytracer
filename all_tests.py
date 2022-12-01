@@ -435,6 +435,8 @@ class Matrixtest(unittest.TestCase):
         
 
 
+        
+
 class Transformationstest(unittest.TestCase):
 
     def test_translation(self):
@@ -685,11 +687,11 @@ class RayTest(unittest.TestCase):
 
     def test_spheretransform(self):
         s = myworld.sphere()
-        self.assertTrue(mytuple.Matrix.equal(s.transform, mytuple.Matrix.Id()))
+        self.assertTrue(mytuple.Matrix.equal(s.transformation, mytuple.Matrix.Id()))
 
         t= mytuple.Matrix.translation(2,3,4)
         s.settransform(t)
-        self.assertTrue(t.equal(s.transform))
+        self.assertTrue(t.equal(s.transformation))
 
     def test_inters_transformedray(self):
         s = myworld.sphere()
@@ -710,40 +712,40 @@ class RayTest(unittest.TestCase):
         
 class TestShading(unittest.TestCase):
 
-    def test_normal(self):
+    def test_normalat(self):
         s = myworld.sphere()
-        n = s.normal(mytuple.Point(1,0,0))
+        n = s.normalat(mytuple.Point(1,0,0))
         self.assertEqual(n, mytuple.Vector(1,0,0))
 
-        n = s.normal(mytuple.Point(0,1,0))
+        n = s.normalat(mytuple.Point(0,1,0))
         self.assertEqual(n, mytuple.Vector(0,1,0))
 
-        n = s.normal(mytuple.Point(0,0,1))
+        n = s.normalat(mytuple.Point(0,0,1))
         self.assertEqual(n, mytuple.Vector(0,0,1))
 
-        n = s.normal(mytuple.Point(math.sqrt(3)/3, math.sqrt(3)/3, math.sqrt(3)/3 ))
+        n = s.normalat(mytuple.Point(math.sqrt(3)/3, math.sqrt(3)/3, math.sqrt(3)/3 ))
         self.assertEqual(n, mytuple.Vector(math.sqrt(3)/3, math.sqrt(3)/3, math.sqrt(3)/3))
 
     def test_normalnorm(self):
         s = myworld.sphere()
         p = mytuple.Point(math.sqrt(3)/3, math.sqrt(3)/3, math.sqrt(3)/3 )
-        n= s.normal( p)
+        n= s.normalat( p)
 
         self.assertEqual(n, n.normalize())
 
     def test_transformednormal(self):
         s= myworld.sphere()
         s.settransform(mytuple.Matrix.translation(0,1,0))
-        n = s.normal(mytuple.Point(0, 1.70711, -0.70711))
+        n = s.normalat(mytuple.Point(0, 1.70711, -0.70711))
 
-        self.assertEqual(n.round(), mytuple.Vector(0, 0.70711, -0.70711))
+        self.assertEqual(n.round(), mytuple.Vector(0, 0.70711, -0.70711)) #translated sphere
 
         #s = myworld.sphere()
         m = mytuple.Matrix.scaling(1, .5, 1) * mytuple.Matrix.zrotation(math.pi /5)
         s.settransform(m)
-        n = s.normal(mytuple.Point(0, math.sqrt(2)/2, -math.sqrt(2)/2))
+        n = s.normalat(mytuple.Point(0, math.sqrt(2)/2, -math.sqrt(2)/2))
 
-        self.assertEqual(n.round(), mytuple.Vector(0, .97014, -0.24254))
+        self.assertEqual(n.round(), mytuple.Vector(0, .97014, -0.24254)) # transformed sphere
 
     def test_reflection(self):
         v = mytuple.Vector(1,-1,0)
@@ -861,7 +863,7 @@ class TestWorld(unittest.TestCase):
         s1.material.specular= 0.2
 
         s2 = myworld.sphere()
-        s2.transform = mytuple.Matrix.scaling(.5, .5, .5)
+        s2.transformation = mytuple.Matrix.scaling(.5, .5, .5)
 
         w = myworld.World.defaultworld()
         self.assertTrue( myworld.pointlight.equal(w.lightsource, l))
@@ -1003,7 +1005,7 @@ class TestView(unittest.TestCase):
         self.assertEqual(c.hsize, 160)
         self.assertEqual(c.vsize, 120)
         self.assertAlmostEqual(c.field, math.pi/2)
-        self.assertTrue(c.transform.equal( mytuple.Matrix.Id()))
+        self.assertTrue(c.transformation.equal( mytuple.Matrix.Id()))
 
     def test_camera_pixelsize(self):
         c = myworld.Camera(200, 125, math.pi/2)
@@ -1025,7 +1027,7 @@ class TestView(unittest.TestCase):
 
     def test_rayforpixel_transformed(self):
         c = myworld.Camera(201, 101, math.pi/2)
-        c.transform = mytuple.Matrix.yrotation(math.pi/4) * mytuple.Matrix.translation(0,-2,5)
+        c.transformation = mytuple.Matrix.yrotation(math.pi/4) * mytuple.Matrix.translation(0,-2,5)
         r = myworld.Camera.rayforpixel(c,100,50)
 
         self.assertEqual(r.origin, mytuple.Point(0,2,-5))
@@ -1037,7 +1039,7 @@ class TestView(unittest.TestCase):
         from_ = mytuple.Point(0,0,-5)
         to = mytuple.Point(0,0,0)
         up = mytuple.Vector(0,1,0)
-        c.transform = mytuple.Matrix.viewtransform(from_,to,up)
+        c.transformation = mytuple.Matrix.viewtransform(from_,to,up)
 
         image = myworld.Camera.render(c, w)
         #mycolor.canvastoppm(image, "testrender.ppm")
@@ -1090,7 +1092,7 @@ class ShadowsTest(unittest.TestCase):
         w.lightsource = myworld.pointlight(mytuple.Point(0,0,-10), mycolor.Color(1,1,1))
         s1 = myworld.sphere()
         s2 = myworld.sphere()
-        s2.transform = mytuple.Matrix.translation(0,0,10)
+        s2.transformation = mytuple.Matrix.translation(0,0,10)
         w.obj = [s1, s2]
         r = myworld.ray(mytuple.Point(0,0,5), mytuple.Vector(0,0,1))
         i = myworld.intersection(4, s2)
@@ -1103,7 +1105,7 @@ class ShadowsTest(unittest.TestCase):
     def test_thehit_offsetthepoint(self): #evitare acne
         r = myworld.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
         shape = myworld.sphere()
-        shape.transform = mytuple.Matrix.translation(0,0,1)
+        shape.transformation = mytuple.Matrix.translation(0,0,1)
         i = myworld.intersection(5, shape)
         comps = myworld.precomp(i,r)
 
@@ -1120,10 +1122,10 @@ class TestPlanes(unittest.TestCase):
 
     def test_shapetransformation(self):
         s = myworld.Shape()
-        self.assertTrue(s.transform.equal( mytuple.Matrix.Id()))
+        self.assertTrue(s.transformation.equal( mytuple.Matrix.Id()))
 
         s.settransform( mytuple.Matrix.translation(2,3,4))
-        self.assertTrue(s.transform.equal( mytuple.Matrix.translation(2,3,4)))
+        self.assertTrue(s.transformation.equal( mytuple.Matrix.translation(2,3,4)))
 
     def test_shapematerial(self):
         S = myworld.Shape()
@@ -1137,7 +1139,7 @@ class TestPlanes(unittest.TestCase):
 
         self.assertTrue(s.material.equal( m))
 
-    def test_inters_transformedray(self):
+    def test_shape_localinters(self):
         s = myworld.Shape()
         r = myworld.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
 
@@ -1150,3 +1152,15 @@ class TestPlanes(unittest.TestCase):
         xs = r.inters(s)
         self.assertEqual(s.savedray.origin,   mytuple.Point(-5,0,-5))
         self.assertEqual(s.savedray.direction, mytuple.Vector(0,0,1))
+
+    def test_shape_transformednormalat(self):
+        s= myworld.Shape()
+        s.settransform( mytuple.Matrix.translation(0,1,0))
+        n = s.normalat(mytuple.Point(0, 1.70711, -0.70711))
+        self.assertEqual(n.round(), mytuple.Vector(0, 0.70711, -0.70711)) #translated sphere
+
+        #s = myworld.Shape()
+        m = mytuple.Matrix.scaling(1, .5, 1) * mytuple.Matrix.zrotation(math.pi /5)
+        s.settransform(m)
+        n = s.normalat(mytuple.Point(0, math.sqrt(2)/2, -math.sqrt(2)/2))
+        self.assertEqual(n.round(), mytuple.Vector(0, .97014, -0.24254)) # transformed sphere
