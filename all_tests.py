@@ -1136,3 +1136,17 @@ class TestPlanes(unittest.TestCase):
         s.material = m
 
         self.assertTrue(s.material.equal( m))
+
+    def test_inters_transformedray(self):
+        s = myworld.Shape()
+        r = myworld.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
+
+        s.settransform(mytuple.Matrix.scaling(2,2,2)) # scaled shape
+        xs = r.inters(s)
+        self.assertEqual(s.savedray.origin,   mytuple.Point(0,0,-2.5))
+        self.assertEqual(s.savedray.direction, mytuple.Vector(0,0, 0.5))
+        
+        s.settransform(mytuple.Matrix.translation(5,0,0)) # translated shape
+        xs = r.inters(s)
+        self.assertEqual(s.savedray.origin,   mytuple.Point(-5,0,-5))
+        self.assertEqual(s.savedray.direction, mytuple.Vector(0,0,1))

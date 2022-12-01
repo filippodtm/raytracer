@@ -70,9 +70,13 @@ class Shape:
         # transform ray by inverse
         # for normal, convert point to objsp, then normal* inv^T
         
-
     def settransform(self, m: mytuple.Matrix):
         self.transform = m
+
+    def localintersect(self, localray):
+        self.savedray = localray
+
+
 
 class sphere(Shape):
         
@@ -86,6 +90,25 @@ class sphere(Shape):
     
     def equal(self,other):
         return self.transform.equal(other.transform) and self.material.equal(other.material)
+
+    def localintersect(self, localray):
+        """compute localray-sphere intersections, with possible transformations"""
+        self.savedray = localray
+        # vector center of sphere --> ray.origin
+        v = localray.origin - mytuple.Point(0,0,0)
+        
+        # look for t sol. of: ||v + t*dir||^2 = 1
+        # ie:      |dir|^ t^ + 2<dir,v> t + |v|^ = 1
+        a = mytuple.MyTuple.dot(localray.direction,localray.direction)
+        b = 2* mytuple.MyTuple.dot(localray.direction, v)
+        c = mytuple.MyTuple.dot(v,v) -1
+        delta = b**2 -4*a*c
+        if delta<0:
+            return ()
+        else:
+            t1 = (-b-math.sqrt(delta)) /(2*a)
+            t2 = (-b+math.sqrt(delta)) /(2*a)
+            return intersections(intersection(t1, self), intersection(t2,self))
 
 
 
@@ -105,23 +128,9 @@ class ray:
         return self.origin+ t* self.direction
 
     def inters(self, s: sphere):
-        """compute ray-sphere intersections, with possible transformations"""
-        ray2 = self.transform(s.transform.inverse())
-        # vector center of sphere --> ray.origin
-        v = ray2.origin - mytuple.Point(0,0,0)
-        
-        # look for t sol. of: ||v + t*dir||^2 = 1
-        # ie:      |dir|^ t^ + 2<dir,v> t + |v|^ = 1
-        a = mytuple.MyTuple.dot(ray2.direction,ray2.direction)
-        b = 2* mytuple.MyTuple.dot(ray2.direction, v)
-        c = mytuple.MyTuple.dot(v,v) -1
-        delta = b**2 -4*a*c
-        if delta<0:
-            return ()
-        else:
-            t1 = (-b-math.sqrt(delta)) /(2*a)
-            t2 = (-b+math.sqrt(delta)) /(2*a)
-            return intersections(intersection(t1, s), intersection(t2,s))
+        localray = self.transform(s.transform.inverse())   
+        return s.localintersect(localray)
+
 
     def transform(self, matr: mytuple.Matrix):
         o = matr* self.origin
