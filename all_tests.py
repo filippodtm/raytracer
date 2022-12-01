@@ -5,7 +5,7 @@ import mytuple
 import mycolor
 import myworld
 
-class TupleTest(unittest.TestCase):
+class TupleTest(unittest.TestCase):  #1
 
     def test_ATupleIsAPointOrvector(self):
         a = mytuple.MyTuple(4.3, -4.2, 3.1, 1.0)
@@ -95,7 +95,7 @@ class TupleTest(unittest.TestCase):
     
     
 
-class ColorTest(unittest.TestCase):
+class ColorTest(unittest.TestCase): #2
     def test_colorsaretuples(self):
         c = mycolor.Color(-0.5, 0.4, 1.7)
 
@@ -123,7 +123,7 @@ class ColorTest(unittest.TestCase):
 
         
 
-class CanvasTest(unittest.TestCase):
+class CanvasTest(unittest.TestCase): #2.2
     
     def test_creatingcanvas(self):
         c = mycolor.Canvas(10, 20)
@@ -209,7 +209,7 @@ class CanvasTest(unittest.TestCase):
         
 
 
-class Matrixtest(unittest.TestCase):
+class Matrixtest(unittest.TestCase): #3
 
     def test_creatematrix(self):
         M = mytuple.Matrix([[1,2,3,4],[5.5, 6.5, 7.5, 8.5],
@@ -437,7 +437,7 @@ class Matrixtest(unittest.TestCase):
 
         
 
-class Transformationstest(unittest.TestCase):
+class Transformationstest(unittest.TestCase): #4
 
     def test_translation(self):
         tran = mytuple.Matrix.translation(5,-3,2)
@@ -542,7 +542,7 @@ class Transformationstest(unittest.TestCase):
 
 
 
-class RayTest(unittest.TestCase):
+class RayTest(unittest.TestCase): #5
 
     def test_createray(self):
         origin = mytuple.Point(1,2,3)
@@ -709,8 +709,10 @@ class RayTest(unittest.TestCase):
 
 
 
+
+
         
-class TestShading(unittest.TestCase):
+class TestShading(unittest.TestCase): #6
 
     def test_normalat(self):
         s = myworld.sphere()
@@ -846,7 +848,7 @@ class TestShading(unittest.TestCase):
 
         
 
-#CHAPTER 7
+#CHAPTER 7 ############################################################################
 class TestWorld(unittest.TestCase):
 
     def test_emptyworld(self):
