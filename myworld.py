@@ -77,16 +77,16 @@ class Shape:
         return self.transformation.equal(other.transformation) and self.material.equal(other.material)
 
 
-    def normalat(self, p: mytuple.Point):
+    def normal_at(self, p: mytuple.Point):
         localpoint = self.transformation.inverse() * p
 
-        localnormal = self.localnormalat(localpoint)
+        localnormal = self.localnormal_at(localpoint)
         
         n_world = self.transformation.inverse().transpose() * localnormal
         n_world.w = 0   # se ho traslazioni
         return mytuple.Vector.normalize(n_world.to_vector())
 
-    def localnormalat(self, p):
+    def localnormal_at(self, p):
         return mytuple.Vector(p.x, p.y, p.z) #inutile
 
     
@@ -97,8 +97,7 @@ class Shape:
 
 
 class sphere(Shape):
-        
-    def localnormalat(self, localpoint):
+    def localnormal_at(self, localpoint):
         return localpoint - mytuple.Point(0,0,0)
         
     # def equal(self,other):
@@ -123,7 +122,15 @@ class sphere(Shape):
             t2 = (-b+math.sqrt(delta)) /(2*a)
             return intersections(intersection(t1, self), intersection(t2,self))
 
+class Plane(Shape):
+    def localnormal_at(self, p):
+        return mytuple.Vector(0,1,0)
 
+    def localintersect(self, localray):
+        if abs(localray.direction.y) > mytuple.EPSILON:
+            t = -localray.origin.y / localray.direction.y
+            return [intersection(t,self)]
+        #(se < EPS return none)
 
 
 
@@ -175,7 +182,7 @@ def precomp( i: intersection, r: ray):  #returns info on that intersection
              'point':r.position(i.t),
              'eyev':-r.direction,
              'inside':False,
-             'normal':i.obj.normalat( r.position(i.t)) }
+             'normal':i.obj.normal_at( r.position(i.t)) }
 
     if comps['normal'].dot(comps['eyev']) < 0: #inside
         comps['inside'] =True
