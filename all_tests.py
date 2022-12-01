@@ -563,48 +563,49 @@ class RayTest(unittest.TestCase): #5
         self.assertEqual(r.position(2.5), mytuple.Point(4.5, 3, 4))
 
         
-    def test_inters2points(self):
+    def test_inters2points(self):  #modif. localintersect
         r = myworld.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
         s = myworld.sphere()
-        xs = r.inters(s)
+        xs = s.localintersect(r)
 
         self.assertEqual(len(xs), 2)
         self.assertAlmostEqual(xs[0].t, 4.0)
         self.assertAlmostEqual(xs[1].t, 6.0)
 
-    def test_inters1tangent(self):
+    def test_inters1tangent(self): #modif. localintersect
         r = myworld.ray(mytuple.Point(0,1,-5), mytuple.Vector(0,0,1))
         s = myworld.sphere()
-        xs = r.inters(s)
+        xs = s.localintersect(r)
 
         self.assertEqual(len(xs), 2)
         self.assertAlmostEqual(xs[0].t, 5.0)
         self.assertAlmostEqual(xs[1].t, 5.0)
 
-    def test_inters0(self):
+    def test_inters0(self): #modif. localintersect
         r = myworld.ray(mytuple.Point(0,2,-5), mytuple.Vector(0,0,1))
         s = myworld.sphere()
-        xs = r.inters(s)
+        xs = s.localintersect(r)
 
         self.assertEqual(len(xs), 0)
 
-    def test_inters_inside(self):
+    def test_inters_inside(self): #modif. localintersect
         r = myworld.ray(mytuple.Point(0,0,0), mytuple.Vector(0,0,1))
         s = myworld.sphere()
-        xs = r.inters(s)
+        xs = s.localintersect(r)
 
         self.assertEqual(len(xs), 2)
         self.assertAlmostEqual(xs[0].t,-1.0)
         self.assertAlmostEqual(xs[1].t, 1.0)
 
-    def test_inters_behind(self):
+    def test_inters_behind(self): #modif. localintersect
         r = myworld.ray(mytuple.Point(0,0,5), mytuple.Vector(0,0,1))
         s = myworld.sphere()
-        xs = r.inters(s)
+        xs = s.localintersect(r)
 
         self.assertEqual(len(xs), 2)
         self.assertAlmostEqual(xs[0].t, -6.0)
         self.assertAlmostEqual(xs[1].t, -4.0)
+
 
         
     def test_intersection(self):
@@ -624,10 +625,10 @@ class RayTest(unittest.TestCase): #5
         self.assertEqual(xs[0].t , 1)
         self.assertEqual(xs[1].t , 2)
 
-    def test_inters_setobj(self):
+    def test_inters_obj(self): #modif. localintersect
         r = myworld.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
         s = myworld.sphere()
-        xs = r.inters(s)
+        xs = s.localintersect(r)
 
         self.assertEqual(len(xs), 2)
         self.assertAlmostEqual(xs[0].obj , s)
@@ -685,17 +686,17 @@ class RayTest(unittest.TestCase): #5
         self.assertEqual(r2.origin,    mytuple.Point(2,6,12))
         self.assertEqual(r2.direction, mytuple.Vector(0,3,0))
 
-    def test_spheretransform(self):
-        s = myworld.sphere()
-        self.assertTrue(mytuple.Matrix.equal(s.transformation, mytuple.Matrix.Id()))
+    # def test_spheretransformation(self):
+    #     s = myworld.sphere()
+    #     self.assertTrue(mytuple.Matrix.equal(s.transformation, mytuple.Matrix.Id()))
 
-        t= mytuple.Matrix.translation(2,3,4)
-        s.settransform(t)
-        self.assertTrue(t.equal(s.transformation))
+    #     t= mytuple.Matrix.translation(2,3,4)
+    #     s.settransform(t)
+    #     self.assertTrue(t.equal(s.transformation))
 
-    def test_inters_transformedray(self):
+    def test_inters_transformedsphere(self):  #non cambiato
         s = myworld.sphere()
-        r = myworld.ray(mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
+        r = myworld.ray( mytuple.Point(0,0,-5), mytuple.Vector(0,0,1))
 
         s.settransform(mytuple.Matrix.scaling(2,2,2)) # scaled sphere
         xs = r.inters(s)
@@ -714,40 +715,40 @@ class RayTest(unittest.TestCase): #5
         
 class TestShading(unittest.TestCase): #6
 
-    def test_normalat(self):
+    def test_normalat(self):  #modif. localnormal_at
         s = myworld.sphere()
-        n = s.normalat(mytuple.Point(1,0,0))
+        n = s.localnormalat(mytuple.Point(1,0,0))
         self.assertEqual(n, mytuple.Vector(1,0,0))
 
-        n = s.normalat(mytuple.Point(0,1,0))
+        n = s.localnormalat(mytuple.Point(0,1,0))
         self.assertEqual(n, mytuple.Vector(0,1,0))
 
-        n = s.normalat(mytuple.Point(0,0,1))
+        n = s.localnormalat(mytuple.Point(0,0,1))
         self.assertEqual(n, mytuple.Vector(0,0,1))
 
-        n = s.normalat(mytuple.Point(math.sqrt(3)/3, math.sqrt(3)/3, math.sqrt(3)/3 ))
+        n = s.localnormalat(mytuple.Point(math.sqrt(3)/3, math.sqrt(3)/3, math.sqrt(3)/3 ))
         self.assertEqual(n, mytuple.Vector(math.sqrt(3)/3, math.sqrt(3)/3, math.sqrt(3)/3))
 
-    def test_normalnorm(self):
+    def test_normalnorm(self): #modif. localnormal_at
         s = myworld.sphere()
         p = mytuple.Point(math.sqrt(3)/3, math.sqrt(3)/3, math.sqrt(3)/3 )
-        n= s.normalat( p)
+        n= s.localnormalat( p)
 
         self.assertEqual(n, n.normalize())
 
-    def test_transformednormal(self):
-        s= myworld.sphere()
-        s.settransform(mytuple.Matrix.translation(0,1,0))
-        n = s.normalat(mytuple.Point(0, 1.70711, -0.70711))
+    # def test_transformednormal(self):
+    #     s= myworld.sphere()
+    #     s.settransform(mytuple.Matrix.translation(0,1,0))
+    #     n = s.normalat(mytuple.Point(0, 1.70711, -0.70711))
 
-        self.assertEqual(n.round(), mytuple.Vector(0, 0.70711, -0.70711)) #translated sphere
+    #     self.assertEqual(n.round(), mytuple.Vector(0, 0.70711, -0.70711)) #translated sphere
 
-        #s = myworld.sphere()
-        m = mytuple.Matrix.scaling(1, .5, 1) * mytuple.Matrix.zrotation(math.pi /5)
-        s.settransform(m)
-        n = s.normalat(mytuple.Point(0, math.sqrt(2)/2, -math.sqrt(2)/2))
+    #     #s = myworld.sphere()
+    #     m = mytuple.Matrix.scaling(1, .5, 1) * mytuple.Matrix.zrotation(math.pi /5)
+    #     s.settransform(m)
+    #     n = s.normalat(mytuple.Point(0, math.sqrt(2)/2, -math.sqrt(2)/2))
 
-        self.assertEqual(n.round(), mytuple.Vector(0, .97014, -0.24254)) # transformed sphere
+    #     self.assertEqual(n.round(), mytuple.Vector(0, .97014, -0.24254)) # transformed sphere
 
     def test_reflection(self):
         v = mytuple.Vector(1,-1,0)
@@ -777,15 +778,15 @@ class TestShading(unittest.TestCase): #6
         self.assertEqual(m.specular, .9)
         self.assertEqual(m.shininess, 200.0)
 
-    def test_spherematerial(self):
-        s = myworld.sphere()
-        self.assertTrue( s.material.equal(myworld.Material() ))
-        # è quello default, non sono lo stesso oggetto
+    # def test_spherematerial(self):
+    #     s = myworld.sphere()
+    #     self.assertTrue( s.material.equal(myworld.Material() ))
+    #     # è quello default, equality not identity
 
-        m = myworld.Material()
-        m.ambient = 1
-        s.material = m
-        self.assertEqual(s.material, m)  #here it works (bruh)
+    #     m = myworld.Material()
+    #     m.ambient = 1
+    #     s.material = m
+    #     self.assertEqual(s.material, m)  #here it works (bruh)
 
     #LIGHTING
 
@@ -1138,7 +1139,6 @@ class TestPlanes(unittest.TestCase):
         m = myworld.Material()
         m.ambient = 1
         s.material = m
-
         self.assertTrue(s.material.equal( m))
 
     def test_shape_localinters(self):
@@ -1159,13 +1159,13 @@ class TestPlanes(unittest.TestCase):
         s= myworld.Shape()
         s.settransform( mytuple.Matrix.translation(0,1,0))
         n = s.normalat(mytuple.Point(0, 1.70711, -0.70711))
-        self.assertEqual(n.round(), mytuple.Vector(0, 0.70711, -0.70711)) #translated sphere
+        self.assertEqual(n.round(), mytuple.Vector(0, 0.70711, -0.70711)) #translated shape
 
         #s = myworld.Shape()
         m = mytuple.Matrix.scaling(1, .5, 1) * mytuple.Matrix.zrotation(math.pi /5)
         s.settransform(m)
         n = s.normalat(mytuple.Point(0, math.sqrt(2)/2, -math.sqrt(2)/2))
-        self.assertEqual(n.round(), mytuple.Vector(0, .97014, -0.24254)) # transformed sphere
+        self.assertEqual(n.round(), mytuple.Vector(0, .97014, -0.24254)) # transformed shape
 
     def test_sphereissubclassofShape(self):
         self.assertTrue(issubclass(myworld.sphere, myworld.Shape))
