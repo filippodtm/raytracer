@@ -100,9 +100,6 @@ class sphere(Shape):
     def localnormal_at(self, localpoint):
         return localpoint - mytuple.Point(0,0,0)
         
-    # def equal(self,other):
-    #     return self.transformation.equal(other.transformation) and self.material.equal(other.material)
-
     def localintersect(self, localray):
         """compute localray-sphere intersections"""
         super().localintersect(localray)
@@ -131,9 +128,6 @@ class Plane(Shape):
             t = -localray.origin.y / localray.direction.y
             return [intersection(t,self)]
         #(se < EPS return none)
-
-
-
 
 
 class ray:
