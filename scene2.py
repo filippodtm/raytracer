@@ -10,7 +10,7 @@ from myworld import *
 
 w = World()
 
-floor = plane()
+floor = Plane()
 #floor.transformation = Matrix.scaling(10, .01, 10)
 floor.material = Material()
 floor.material.color = Color(1, .9, .9)
@@ -23,15 +23,11 @@ leftwall.material = floor.material
 leftwall.material.color = Color(1, .9, .9)
 leftwall.material.specular = 0
 
-
-rightwall = sphere()
-rightwall.transformation = Matrix.translation(0,0,5) * Matrix.yrotation(pi
-                                        /4) *Matrix.xrotation(pi/2) * Matrix.scaling(10, .01, 10)
-rightwall.material = floor.material
-
+backdrop = Plane()
+backdrop.transformation = Matrix.translation(0,0,6)* Matrix.xrotation(pi/2)
 
 middle = sphere()
-middle.transformation = Matrix.translation(-.5, 1, .5) #* Matrix.shear(1,1, 0,1, 0,0)
+middle.transformation = Matrix.translation(-0.5, 1, .5) #* Matrix.shear(1,1, 0,1, 0,0)
 middle.material.color = Color(.1, 1, .5)
 middle.material.diffuse = 0.7
 middle.material.specular = 1 #
@@ -49,7 +45,7 @@ left.material.diffuse = 0.7
 left.material.specular = 0.5 #
 
 
-w.obj = [floor, rightwall,  middle, left]
+w.obj = [floor, backdrop, middle, left]
 w.lightsource = pointlight(Point(-10, 10, -10), Color(1,1,1))
 
 
