@@ -1164,3 +1164,6 @@ class TestPlanes(unittest.TestCase):
         s.settransform(m)
         n = s.normalat(mytuple.Point(0, math.sqrt(2)/2, -math.sqrt(2)/2))
         self.assertEqual(n.round(), mytuple.Vector(0, .97014, -0.24254)) # transformed sphere
+
+    def test_sphereissubclassofShape(self):
+        self.assertTrue(issubclass(myworld.sphere, myworld.Shape))
