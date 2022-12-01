@@ -73,10 +73,14 @@ class Shape:
     def settransform(self, m: mytuple.Matrix):
         self.transformation= m
 
+    def equal(self,other):
+        return self.transformation.equal(other.transformation) and self.material.equal(other.material)
+
+
     def normalat(self, p: mytuple.Point):
         localpoint = self.transformation.inverse() * p
 
-        localnormal = self.localnormalat(localpoint)  #va?
+        localnormal = self.localnormalat(localpoint)
         
         n_world = self.transformation.inverse().transpose() * localnormal
         n_world.w = 0   # se ho traslazioni
@@ -97,16 +101,15 @@ class sphere(Shape):
     def localnormalat(self, localpoint):
         return localpoint - mytuple.Point(0,0,0)
         
-    def equal(self,other):
-        return self.transformation.equal(other.transformation) and self.material.equal(other.material)
+    # def equal(self,other):
+    #     return self.transformation.equal(other.transformation) and self.material.equal(other.material)
 
     def localintersect(self, localray):
-        """compute localray-sphere intersections, with possible transformations"""
+        """compute localray-sphere intersections"""
         super().localintersect(localray)
         
         # vector center of sphere --> ray.origin
         v = localray.origin - mytuple.Point(0,0,0)
-        
         # look for t sol. of: ||v + t*dir||^2 = 1
         # ie:      |dir|^ t^ + 2<dir,v> t + |v|^ = 1
         a = mytuple.MyTuple.dot(localray.direction,localray.direction)

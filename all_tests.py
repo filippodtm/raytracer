@@ -1120,7 +1120,7 @@ class ShadowsTest(unittest.TestCase):
 
 
 
-
+# CHAP 9 #################################################################################
 class TestPlanes(unittest.TestCase):
 
     def test_shapetransformation(self):
@@ -1169,3 +1169,17 @@ class TestPlanes(unittest.TestCase):
 
     def test_sphereissubclassofShape(self):
         self.assertTrue(issubclass(myworld.sphere, myworld.Shape))
+
+
+        
+    def test_planenormal(self):
+        p = myworld.Plane()
+        n1 = p.localnormalat(mytuple.Point(0,0,0))
+        n2 = p.localnormalat(mytuple.Point(10,0,-10))
+        n3 = p.localnormalat(mytuple.Point(-5,0,150))
+
+        self.assertEqual(n1, mytuple.Vector(0,1,0))
+        self.assertEqual(n2, mytuple.Vector(0,1,0))
+        self.assertEqual(n3, mytuple.Vector(0,1,0))
+
+        
