@@ -26,7 +26,13 @@ class Material:
                         other.ambient) and math.isclose(self.diffuse,
                         other.diffuse) and math.isclose(self.specular,
                        other.specular) and math.isclose(self.shininess,other.shininess)
-    
+
+
+
+class Stripepattern:
+    def __init__(self,a,b):
+        pass
+
     
 def lighting(material: Material,
                     l: pointlight,

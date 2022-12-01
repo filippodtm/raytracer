@@ -1211,3 +1211,24 @@ class TestPlanes(unittest.TestCase):
         self.assertEqual(len(xs), 1)
         self.assertAlmostEqual(xs[0].t, 1)
         self.assertEqual(xs[0].obj, p)
+
+
+
+
+
+# CHAP 10 ##############################################################################
+class TestPatterns(unittest.TestCase):
+
+    def test_stripepattern(self):
+        pattern = myworld.Stripepattern(mycolor.white(), mycolor.black())
+
+        self.assertEqual(pattern.a, mycolor.white())
+        self.assertEqual(pattern.b, mycolor.black())
+
+    def test_stripe_at(self): #(stripe_at)
+        pattern = myworld.Stripepattern(mycolor.white(), mycolor.black())
+
+        self.assertEqual(pattern.stripe_at(mytuple.Point(0,0,0)), mycolor.white()) #in y
+        self.assertEqual(pattern.stripe_at(mytuple.Point(0,1,0)), mycolor.white())
+        self.assertEqual(pattern.stripe_at(mytuple.Point(0,2,0)), mycolor.white())
+        

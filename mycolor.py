@@ -45,9 +45,11 @@ class Color:
     def hadamardprod(self, other):
         return Color(self.red *other.red, self.green *other.green, self.blue *other.blue)
 
-    @staticmethod
-    def black():
-        return Color(0,0,0)
+    
+def black():
+    return Color(0,0,0)
+def white():
+    return Color(0,0,0)
     
 
 
