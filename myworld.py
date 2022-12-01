@@ -73,27 +73,37 @@ class Shape:
     def settransform(self, m: mytuple.Matrix):
         self.transformation= m
 
+    def normalat(self, p: mytuple.Point):
+        localpoint = self.transformation.inverse() * p
+
+        localnormal = self.localnormalat(localpoint)  #va?
+        
+        n_world = self.transformation.inverse().transpose() * localnormal
+        n_world.w = 0   # se ho traslazioni
+        return mytuple.Vector.normalize(n_world.to_vector())
+
+    def localnormalat(self, p):
+        return mytuple.Vector(p.x, p.y, p.z) #inutile
+
+    
     def localintersect(self, localray):
         self.savedray = localray
-        #poi eventualmente il lavoro è nella localintersect di sphere/ecc
+        # + localintersect di sphere/ecc
+
 
 
 class sphere(Shape):
         
-    def normalat(self, p: mytuple.Point):
-        p_wrtobj = self.transformation.inverse() * p
-        n_wrtobj = p_wrtobj - mytuple.Point(0,0,0)
-        n = self.transformation.inverse().transpose() * n_wrtobj
-
-        n.w = 0   #serve se ho traslazioni
-        return mytuple.Vector.normalize(n.to_vector())
-    
+    def localnormalat(self, localpoint):
+        return localpoint - mytuple.Point(0,0,0)
+        
     def equal(self,other):
         return self.transformation.equal(other.transformation) and self.material.equal(other.material)
 
     def localintersect(self, localray):
         """compute localray-sphere intersections, with possible transformations"""
-        self.savedray = localray
+        super().localintersect(localray)
+        
         # vector center of sphere --> ray.origin
         v = localray.origin - mytuple.Point(0,0,0)
         
