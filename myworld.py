@@ -35,12 +35,12 @@ class Stripepattern:
         self.a = colora
         self.b = colorb
     def stripe_at(self, p: mytuple.Point):
-        if math.floor(p.x)//2==0:
+        if math.floor(p.x)%2==0:
             return self.a
         else:
             return self.b
     
-    
+
 def lighting(material: Material,
                     l: pointlight,
                 point: mytuple.Point,
