@@ -14,12 +14,13 @@ class pointlight:
         return self.position==other.position and self.intensity==other.intensity
 
 class Material:
-    def __init__(self,color= mycolor.Color(1,1,1), ambient=.1, diffuse=.9, specular=.9, shininess=200):
+    def __init__(self,color= mycolor.Color(1,1,1), ambient=.1, diffuse=.9, specular=.9, shininess=200, pattern=None):
         self.color= color
         self.ambient = ambient
         self.diffuse = diffuse
         self.specular = specular
         self.shininess = shininess
+        self.pattern = pattern
 
     def equal(self, other):
         return self.color==other.color and math.isclose(self.ambient,
@@ -47,6 +48,9 @@ def lighting(material: Material,
                normal: mytuple.Vector,
              inshadow= False):
 
+    if material.pattern:
+        material.color = material.pattern.stripe_at(point)
+        
     sourcev = mytuple.Vector.normalize(l.position - point)
     ambient = l.intensity * material.color * material.ambient
     if inshadow:

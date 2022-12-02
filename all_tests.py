@@ -1245,3 +1245,19 @@ class TestPatterns(unittest.TestCase):
         self.assertEqual( ptr.stripe_at(mytuple.Point(-1,0,0)), mycolor.black())
 
         self.assertEqual( ptr.stripe_at(mytuple.Point(-1.1,0,0)), mycolor.white())
+
+    def test_lightingpattern(self):
+        m = myworld.Material()
+        m.pattern = myworld.Stripepattern(mycolor.white(), mycolor.black())
+        m.ambient = 1
+        m.diffuse = 0
+        m.specular = 0
+        eye = mytuple.Vector(0,0,-1)
+        normal = mytuple.Vector(0,0,-1)
+        light = myworld.pointlight(mytuple.Point(0,0,-10), mycolor.Color(1,1,1))
+
+        c1 = myworld.lighting(m, light, mytuple.Point(0.9,0,0), eye, normal, False)
+        c2 = myworld.lighting(m, light, mytuple.Point(1.1,0,0), eye, normal, False)
+
+        self.assertEqual(c1, mycolor.white())
+        self.assertEqual(c2, mycolor.black())
