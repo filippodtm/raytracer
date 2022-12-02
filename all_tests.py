@@ -1261,3 +1261,5 @@ class TestPatterns(unittest.TestCase):
 
         self.assertEqual(c1, mycolor.white())
         self.assertEqual(c2, mycolor.black())
+
+        self.assertEqual(mycolor.white(), mycolor.Color(1,1,1))

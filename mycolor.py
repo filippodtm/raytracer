@@ -49,7 +49,7 @@ class Color:
 def black():
     return Color(0,0,0)
 def white():
-    return Color(0,0,0)
+    return Color(1,1,1)
     
 
 

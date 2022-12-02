@@ -14,7 +14,7 @@ floor = Plane()
 floor.material = Material()
 floor.material.color = Color(1, .9, .9)
 floor.material.specular = 0
-#floor.material.pattern = Stripepattern(black(), mycolor.Color(1,0,0))
+floor.material.pattern = Stripepattern(white(), mycolor.Color(1,0,0))
 
 # leftwall = sphere()
 # leftwall.transformation = Matrix.translation(0,0,5) * Matrix.yrotation(-pi
@@ -25,12 +25,11 @@ floor.material.specular = 0
 
 backdrop = Plane()
 backdrop.transformation = Matrix.translation(0,0,6)* Matrix.xrotation(pi/2)
-backdrop.material.pattern = Stripepattern(black(), Color(1,1,1))
+backdrop.material.pattern = Stripepattern(white(), Color(1,0,0))
 
 
 middle = sphere()
-middle.material.pattern = Stripepattern(Color(0,0,1), white())
-
+middle.material.pattern = Stripepattern(Color(1,0,0), white())
 middle.transformation = Matrix.translation(-0.5, 1, .5) #* Matrix.shear(1,1, 0,1, 0,0)
 #middle.material.color = Color(.1, 1, .5)
 # middle.material.diffuse = 0.7
