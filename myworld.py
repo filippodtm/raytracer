@@ -30,9 +30,15 @@ class Material:
 
 
 class Stripepattern:
-    def __init__(self,a,b):
-        pass
-
+    def __init__(self, colora, colorb):
+        self.a = colora
+        self.b = colorb
+    def stripe_at(self, p: mytuple.Point):
+        if math.floor(p.x)//2==0:
+            return self.a
+        else:
+            return self.b
+    
     
 def lighting(material: Material,
                     l: pointlight,
@@ -49,14 +55,14 @@ def lighting(material: Material,
     sourcedotnormal = sourcev.dot(normal)
     if sourcedotnormal < 0:
         #light source is on the other side
-        diffuse = mycolor.Color.black()
-        specular = mycolor.Color.black()
+        diffuse = mycolor.black()
+        specular = mycolor.black()
     else:
         diffuse = l.intensity * material.color *material.diffuse *  sourcedotnormal
 
         reflected = -sourcev.reflect(normal)
         if reflected.dot(eye) <=0:
-            specular = mycolor.Color.black()
+            specular = mycolor.black()
         else:
             k = reflected.dot(eye)**material.shininess
             specular = l.intensity * material.specular * k
@@ -241,7 +247,7 @@ class World:
         intersezioni = self.intersectworld(r)
         h = hit(intersezioni)
         if not h:
-            return mycolor.Color.black()
+            return mycolor.black()
         else:
             comps = precomp(h, r)
             return self.shade_hit(comps)

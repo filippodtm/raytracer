@@ -1216,7 +1216,7 @@ class TestPlanes(unittest.TestCase):
 
 
 
-# CHAP 10 ##############################################################################
+# CHAP 10 ###########################################################################
 class TestPatterns(unittest.TestCase):
 
     def test_stripepattern(self):
@@ -1226,9 +1226,22 @@ class TestPatterns(unittest.TestCase):
         self.assertEqual(pattern.b, mycolor.black())
 
     def test_stripe_at(self): #(stripe_at)
-        pattern = myworld.Stripepattern(mycolor.white(), mycolor.black())
+        ptr = myworld.Stripepattern(mycolor.white(), mycolor.black())
 
-        self.assertEqual(pattern.stripe_at(mytuple.Point(0,0,0)), mycolor.white()) #in y
-        self.assertEqual(pattern.stripe_at(mytuple.Point(0,1,0)), mycolor.white())
-        self.assertEqual(pattern.stripe_at(mytuple.Point(0,2,0)), mycolor.white())
+        self.assertEqual( ptr.stripe_at(mytuple.Point(0,0,0)), mycolor.white()) #in y
+        self.assertEqual( ptr.stripe_at(mytuple.Point(0,1,0)), mycolor.white())
+        self.assertEqual( ptr.stripe_at(mytuple.Point(0,2,0)), mycolor.white())
+
+        self.assertEqual( ptr.stripe_at(mytuple.Point(0,0,0)), mycolor.white()) #in z
+        self.assertEqual( ptr.stripe_at(mytuple.Point(0,0,1)), mycolor.white())
+        self.assertEqual( ptr.stripe_at(mytuple.Point(0,0,2)), mycolor.white())
+
+
+        self.assertEqual( ptr.stripe_at(mytuple.Point(0,0,0)),  mycolor.white()) #in x
+        self.assertEqual( ptr.stripe_at(mytuple.Point(0.9,0,0)), mycolor.white())
         
+        self.assertEqual( ptr.stripe_at(mytuple.Point(1,0,0)), mycolor.black())
+        self.assertEqual( ptr.stripe_at(mytuple.Point(-0.1,0,0)), mycolor.black())
+        self.assertEqual( ptr.stripe_at(mytuple.Point(-1,0,0)), mycolor.black())
+
+        self.assertEqual( ptr.stripe_at(mytuple.Point(-1.1,0,0)), mycolor.white())
