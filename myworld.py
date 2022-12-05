@@ -4,7 +4,7 @@ import mycolor  # Material, light
 
 
 
-#LIGHTING #############################################
+# Materials #############################################
 class pointlight:
     def __init__(self, pos: mytuple.Point, intens: mycolor.Color):
         self.position = pos
@@ -40,38 +40,6 @@ class Stripepattern:
         else:
             return self.b
     
-
-def lighting(material: Material,
-                    l: pointlight,
-                point: mytuple.Point,
-                  eye: mytuple.Vector,
-               normal: mytuple.Vector,
-             inshadow= False):
-
-    if material.pattern:
-        material.color = material.pattern.stripe_at(point)
-        
-    sourcev = mytuple.Vector.normalize(l.position - point)
-    ambient = l.intensity * material.color * material.ambient
-    if inshadow:
-        return ambient 
-    
-    sourcedotnormal = sourcev.dot(normal)
-    if sourcedotnormal < 0:
-        #light source is on the other side
-        diffuse = mycolor.black()
-        specular = mycolor.black()
-    else:
-        diffuse = l.intensity * material.color *material.diffuse *  sourcedotnormal
-
-        reflected = -sourcev.reflect(normal)
-        if reflected.dot(eye) <=0:
-            specular = mycolor.black()
-        else:
-            k = reflected.dot(eye)**material.shininess
-            specular = l.intensity * material.specular * k
-    return ambient + diffuse + specular
-
 
 
 
@@ -175,6 +143,51 @@ class ray:
 
 
 
+
+
+
+
+def lighting(material: Material, #omettere
+                 obj : Shape,
+                   l : pointlight,
+                point: mytuple.Point,
+                  eye: mytuple.Vector,
+               normal: mytuple.Vector,
+             inshadow= False):
+
+    if material.pattern:   #pag130
+        material.color = material.pattern.stripe_atobj(obj, point)
+    
+    sourcev = mytuple.Vector.normalize(l.position - point)
+    ambient = l.intensity * material.color * material.ambient
+    if inshadow:
+        return ambient 
+    
+    sourcedotnormal = sourcev.dot(normal)
+    if sourcedotnormal < 0:
+        #light source is on the other side
+        diffuse = mycolor.black()
+        specular = mycolor.black()
+    else:
+        diffuse = l.intensity * material.color *material.diffuse *  sourcedotnormal
+
+        reflected = -sourcev.reflect(normal)
+        if reflected.dot(eye) <=0:
+            specular = mycolor.black()
+        else:
+            k = reflected.dot(eye)**material.shininess
+            specular = l.intensity * material.specular * k
+    return ambient + diffuse + specular
+
+
+
+
+
+
+
+
+    
+
 class intersection:
     def __init__(self, t, obj):
         self.t = t
@@ -247,6 +260,7 @@ class World:
         inshadow = self.isinshadow(comps['pointover']) #usa 'pointover'
         
         return lighting(comps['obj'].material,
+                        comps['obj'],
                         self.lightsource,
                         comps['pointover'],
                         comps['eyev'],
