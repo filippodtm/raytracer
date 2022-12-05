@@ -31,9 +31,10 @@ class Material:
 
 
 class Stripepattern:
-    def __init__(self, colora, colorb):
+    def __init__(self, colora, colorb, transf=mytuple.Matrix.Id()):
         self.a = colora
         self.b = colorb
+        self.transformation= transf
     def stripe_at(self, p: mytuple.Point):
         if math.floor(p.x)%2==0:
             return self.a
@@ -60,7 +61,7 @@ class Shape:
     def equal(self,other):
         return self.transformation.equal(other.transformation) and self.material.equal(other.material)
 
-    def stripe_atobj(self, point_wrtworld):
+    def stripeobj_at(self, point_wrtworld):
         point_wrtobj = self.transformation.inverse() * point_wrtworld
         ptr = self.material.pattern
         point_wrtpattern= ptr.transformation.inverse() * point_wrtobj
@@ -156,7 +157,7 @@ def lighting(#material: Material,  #ometto
              inshadow= False):
 
     if obj.material.pattern:   #pag130
-        col = obj.material.pattern.stripe_atobj(obj, point)
+        col = obj.stripeobj_at( point)
     else:
         col = obj.material.color
     

@@ -788,7 +788,7 @@ class TestShading(unittest.TestCase): #6
     #     s.material = m
     #     self.assertEqual(s.material, m)  #here it works (bruh)
 
-    #LIGHTING
+    #LIGHTING  (aggiunto obj default)
 
     def test_lighting1front(self):
         m = myworld.Material()
@@ -797,8 +797,10 @@ class TestShading(unittest.TestCase): #6
         eye = mytuple.Vector(0,0,-1)
         normal = mytuple.Vector(0,0,-1)
         light = myworld.pointlight(mytuple.Point(0,0,-10), mycolor.Color(1,1,1))
-        result = myworld.lighting(m, light, position, eye, normal)
 
+        obj = myworld.Shape()
+        obj.material = m
+        result = myworld.lighting(obj, light, position, eye, normal)
         self.assertTrue(result == mycolor.Color(1.9, 1.9, 1.9))
 
     def test_lighting2middle(self):
@@ -808,8 +810,10 @@ class TestShading(unittest.TestCase): #6
         eye = mytuple.Vector(0, math.sqrt(2)/2, -math.sqrt(2)/2)
         normal = mytuple.Vector(0,0,-1)
         light = myworld.pointlight(mytuple.Point(0,0,-10), mycolor.Color(1,1,1))
-        result = myworld.lighting(m, light, position, eye, normal)
 
+        obj = myworld.Shape()
+        obj.material = m
+        result = myworld.lighting(obj, light, position, eye, normal)
         self.assertTrue(result == mycolor.Color(1, 1, 1))
 
     def test_lighting3above(self):
@@ -819,8 +823,10 @@ class TestShading(unittest.TestCase): #6
         eye = mytuple.Vector(0,0,-1)
         normal = mytuple.Vector(0,0,-1)
         light = myworld.pointlight(mytuple.Point(0,10,-10), mycolor.Color(1,1,1))
-        result = myworld.lighting(m, light, position, eye, normal)
 
+        obj = myworld.Shape()
+        obj.material = m
+        result = myworld.lighting(obj, light, position, eye, normal)
         self.assertTrue(result.round5() == mycolor.Color(.7364, .7364, .7364 ))
 
     def test_lighting4above(self):
@@ -830,8 +836,10 @@ class TestShading(unittest.TestCase): #6
         eye = mytuple.Vector(0, -math.sqrt(2)/2, -math.sqrt(2)/2)
         normal = mytuple.Vector(0,0,-1)
         light = myworld.pointlight(mytuple.Point(0,10,-10), mycolor.Color(1,1,1))
-        result = myworld.lighting(m, light, position, eye, normal)
-        
+
+        obj = myworld.Shape()
+        obj.material = m
+        result = myworld.lighting(obj, light, position, eye, normal)
         self.assertTrue(result.round5() == mycolor.Color(1.6364, 1.6364, 1.6364))
 
     def test_lighting5behind(self):
@@ -841,8 +849,10 @@ class TestShading(unittest.TestCase): #6
         eye = mytuple.Vector(0, 0, -1)
         normal = mytuple.Vector(0,0,-1)
         light = myworld.pointlight(mytuple.Point(0,0,10), mycolor.Color(1,1,1))
-        result = myworld.lighting(m, light, position, eye, normal)
-        
+
+        obj = myworld.Shape()
+        obj.material = m
+        result = myworld.lighting(obj, light, position, eye, normal)
         self.assertTrue(result.round5() == mycolor.Color(.1, .1, .1))
     
 
@@ -1056,7 +1066,7 @@ class TestView(unittest.TestCase):
 
 class ShadowsTest(unittest.TestCase):
 
-    def test_lighting_surfaceinshadow(self):
+    def test_lighting_surfaceinshadow(self): #aggiunto obj
         #common background (p.86)
         m = myworld.Material()
         position = mytuple.Point(0,0,0)
@@ -1065,7 +1075,8 @@ class ShadowsTest(unittest.TestCase):
         normal = mytuple.Vector(0,0,-1)
         light = myworld.pointlight(mytuple.Point(0,0,-10), mycolor.Color(1,1,1))
         inshadow = True
-        result = myworld.lighting(m, light, position, eye, normal, inshadow)
+        obj = myworld.Shape()
+        result = myworld.lighting(obj, light, position, eye, normal, inshadow)
         
         self.assertEqual(result, mycolor.Color(0.1, 0.1, 0.1))
 
@@ -1251,15 +1262,19 @@ class TestPatterns(unittest.TestCase):
         m.pattern = myworld.Stripepattern(mycolor.white(), mycolor.black())
         m.ambient = 1
         m.diffuse = 0
-        m.specular = 0
+        m.specular= 0
         eye = mytuple.Vector(0,0,-1)
         normal = mytuple.Vector(0,0,-1)
         light = myworld.pointlight(mytuple.Point(0,0,-10), mycolor.Color(1,1,1))
 
-        c1 = myworld.lighting(m, light, mytuple.Point(0.9,0,0), eye, normal, False)
-        c2 = myworld.lighting(m, light, mytuple.Point(1.1,0,0), eye, normal, False)
+        obj = myworld.Shape()
+        obj.material = m
+        c1 = myworld.lighting(obj, light, mytuple.Point(0.9,0,0), eye, normal, False)
+        c2 = myworld.lighting(obj, light, mytuple.Point(1.1,0,0), eye, normal, False)
 
         self.assertEqual(c1, mycolor.white())
         self.assertEqual(c2, mycolor.black())
 
         self.assertEqual(mycolor.white(), mycolor.Color(1,1,1))
+
+        
