@@ -147,7 +147,7 @@ class ray:
 
 
 
-def lighting(material: Material, #omettere
+def lighting(#material: Material,  #ometto
                  obj : Shape,
                    l : pointlight,
                 point: mytuple.Point,
@@ -155,11 +155,13 @@ def lighting(material: Material, #omettere
                normal: mytuple.Vector,
              inshadow= False):
 
-    if material.pattern:   #pag130
-        material.color = material.pattern.stripe_atobj(obj, point)
+    if obj.material.pattern:   #pag130
+        col = obj.material.pattern.stripe_atobj(obj, point)
+    else:
+        col = obj.material.color
     
     sourcev = mytuple.Vector.normalize(l.position - point)
-    ambient = l.intensity * material.color * material.ambient
+    ambient = l.intensity * col * obj.material.ambient
     if inshadow:
         return ambient 
     
@@ -169,14 +171,14 @@ def lighting(material: Material, #omettere
         diffuse = mycolor.black()
         specular = mycolor.black()
     else:
-        diffuse = l.intensity * material.color *material.diffuse *  sourcedotnormal
+        diffuse = l.intensity * col *obj.material.diffuse *  sourcedotnormal
 
         reflected = -sourcev.reflect(normal)
         if reflected.dot(eye) <=0:
             specular = mycolor.black()
         else:
-            k = reflected.dot(eye)**material.shininess
-            specular = l.intensity * material.specular * k
+            k = reflected.dot(eye)**obj.material.shininess
+            specular = l.intensity * obj.material.specular * k
     return ambient + diffuse + specular
 
 
@@ -259,7 +261,7 @@ class World:
     def shade_hit(self, comps: dict):#(qui per multiple lights)#
         inshadow = self.isinshadow(comps['pointover']) #usa 'pointover'
         
-        return lighting(comps['obj'].material,
+        return lighting(#comps['obj'].material,
                         comps['obj'],
                         self.lightsource,
                         comps['pointover'],
