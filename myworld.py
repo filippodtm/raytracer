@@ -92,6 +92,12 @@ class Shape:
     def equal(self,other):
         return self.transformation.equal(other.transformation) and self.material.equal(other.material)
 
+    def stripe_atobj(self, point_wrtworld):
+        point_wrtobj = self.transformation.inverse() * point_wrtworld
+        ptr = self.material.pattern
+        point_wrtpattern= ptr.transformation.inverse() * point_wrtobj
+        return ptr.stripe_at(point_wrtpattern)
+
 
     def normal_at(self, p: mytuple.Point):
         localpoint = self.transformation.inverse() * p
