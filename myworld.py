@@ -30,8 +30,13 @@ class Material:
                       other.shininess) # and self.pattern.equal(other.pattern)
 
 
+
+
+
+def f0(a,b, point): return mycolor.Color(point.x, point.y, point.z)
+
 class Pattern:
-    def __init__(self, f=None, colora=None, colorb=None, transf=mytuple.Matrix.Id()):
+    def __init__(self, f=f0, colora=None, colorb=None, transf=mytuple.Matrix.Id()):
         self.func = f
         self.a = colora
         self.b = colorb
@@ -45,6 +50,7 @@ def stripe(a,b, p: mytuple.Point):
             return a
         else:
             return b
+
 
 # p= Pattern(stripe, mycolor.white(), mycolor.black())
 # print(p.pattern_at(mytuple.Point(0,0,0)))
@@ -67,7 +73,7 @@ class Shape:
     def equal(self,other):
         return self.transformation.equal(other.transformation) and self.material.equal(other.material)
 
-    def patternobj_at(self, point_wrtworld):
+    def patternshape_at(self, point_wrtworld):
         point_wrtobj = self.transformation.inverse() * point_wrtworld
         ptrn = self.material.pattern
         point_wrtpattern= ptrn.transformation.inverse() * point_wrtobj
@@ -163,7 +169,7 @@ def lighting(#material: Material,  #ometto
              inshadow= False):
 
     if obj.material.pattern:   #pag130
-        col = obj.patternobj_at( point)
+        col = obj.patternshape_at( point)
     else:
         col = obj.material.color
     

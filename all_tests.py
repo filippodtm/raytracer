@@ -1274,11 +1274,36 @@ class TestPatterns(unittest.TestCase):
 
         self.assertEqual(c1, mycolor.white())
         self.assertEqual(c2, mycolor.black())
-        
 
-    def test_patterntransf(self):
+    def test_defaultpatterntransf(self):
         pattern = myworld.Pattern()
         self.assertTrue(pattern.transformation.equal(mytuple.Matrix.Id()))
 
         pattern.transformation = mytuple.Matrix.translation(1,2,3)
         self.assertTrue(pattern.transformation.equal(mytuple.Matrix.translation(1,2,3)))
+
+    def test_patterntransformations(self):
+        s = myworld.sphere()
+        s.transformation = mytuple.Matrix.scaling(2,2,2) #obj transform
+        pattern = myworld.Pattern()
+        s.material.pattern = pattern  ### aggiunto io! nella mia patternshape_at c'è s.pattern
+        
+        col = s.patternshape_at(mytuple.Point(2,3,4)) 
+        self.assertEqual(col, mycolor.Color(1, 1.5, 2))
+
+        s = myworld.sphere()
+        pattern = myworld.Pattern()
+        pattern.transformation = mytuple.Matrix.scaling(2,2,2) #pattern transform
+        s.material.pattern = pattern  ### aggiunto io!
+
+        col = s.patternshape_at(mytuple.Point(2,3,4)) 
+        self.assertEqual(col, mycolor.Color(1, 1.5, 2))
+
+        s = myworld.sphere()
+        pattern = myworld.Pattern()
+        s.transformation = mytuple.Matrix.scaling(2,2,2) #pattern&obj transform
+        pattern.transformation = mytuple.Matrix.translation(0.5, 1, 1.5) #pattern&obj transform
+        s.material.pattern = pattern  ### aggiunto io!
+        
+        col = s.patternshape_at(mytuple.Point(2.5, 3, 3.5)) 
+        self.assertEqual(col, mycolor.Color(.75, .5, .25))
