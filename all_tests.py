@@ -1307,3 +1307,34 @@ class TestPatterns(unittest.TestCase):
         
         col = s.patternshape_at(mytuple.Point(2.5, 3, 3.5)) 
         self.assertEqual(col, mycolor.Color(.75, .5, .25))
+
+    def test_gradient(self):
+        pattern = myworld.Pattern(myworld.gradient, mycolor.white(), mycolor.black())
+        
+        self.assertEqual( pattern.pattern_at(mytuple.Point(0,0,0)) , mycolor.white())
+        self.assertEqual( pattern.pattern_at(mytuple.Point(.25, 0,0)), mycolor.Color(.75, .75,.75))
+        self.assertEqual( pattern.pattern_at(mytuple.Point(.5, 0,0)),  mycolor.Color(.5, .5,.5))
+        self.assertEqual( pattern.pattern_at(mytuple.Point(.75, 0,0)), mycolor.Color(.25, .25,.25))
+
+    def test_ringspattern(self):
+        pattern = myworld.Pattern(myworld.rings, mycolor.white(), mycolor.black())
+        
+        self.assertEqual( pattern.pattern_at(mytuple.Point(0,0,0)) , mycolor.white())
+        self.assertEqual( pattern.pattern_at(mytuple.Point(1,0,0)), mycolor.black())
+        self.assertEqual( pattern.pattern_at(mytuple.Point(0,0,1)),  mycolor.black())
+        self.assertEqual( pattern.pattern_at(mytuple.Point(.708,0,.708)), mycolor.black())
+
+    def test_checker(self):
+        pattern = myworld.Pattern(myworld.checker, mycolor.white(), mycolor.black())
+        
+        self.assertEqual( pattern.pattern_at(mytuple.Point(0, 0, 0)) , mycolor.white()) # in x
+        self.assertEqual( pattern.pattern_at(mytuple.Point(.99, 0,0)), mycolor.white())
+        self.assertEqual( pattern.pattern_at(mytuple.Point(1.01,0,0)),  mycolor.black())
+        
+        self.assertEqual( pattern.pattern_at(mytuple.Point(0, 0, 0)) , mycolor.white()) # in y
+        self.assertEqual( pattern.pattern_at(mytuple.Point(0,.99,0)), mycolor.white())
+        self.assertEqual( pattern.pattern_at(mytuple.Point(0,1.01,0)),  mycolor.black())
+        
+        self.assertEqual( pattern.pattern_at(mytuple.Point(0, 0, 0 )) , mycolor.white()) # in z
+        self.assertEqual( pattern.pattern_at(mytuple.Point(0, 0, .99)), mycolor.white())
+        self.assertEqual( pattern.pattern_at(mytuple.Point(0, 0, 1.01)),  mycolor.black())

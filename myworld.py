@@ -45,12 +45,24 @@ class Pattern:
     def pattern_at(self, point):
         return self.func(self.a, self.b, point)
 
-def stripe(a,b, p: mytuple.Point):
-        if math.floor(p.x)%2==0:
-            return a
-        else:
-            return b
+def stripe(a,b, point):
+    if math.floor(point.x)%2==0:
+        return a
+    else: return b
+def gradient(a,b,point):
+    return a + (b-a)* (point.x- math.floor(point.x))
+def rings(a,b,p):
+    if math.floor( math.sqrt((p.x)**2 +(p.z)**2)) %2==0:
+        return a
+    else: return b
+def checker(a,b, p):
+    d= math.floor(p.x) +math.floor(p.y)+math.floor(p.z)
+    if d %2==0:
+        return a
+    else: return b
 
+
+    
 
 # p= Pattern(stripe, mycolor.white(), mycolor.black())
 # print(p.pattern_at(mytuple.Point(0,0,0)))

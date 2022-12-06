@@ -14,8 +14,8 @@ floor = Plane()
 floor.material = Material()
 floor.material.color = Color(1, .9, .9)
 floor.material.specular = 0
-floor.material.pattern = Pattern(stripe, white(), mycolor.Color(1,0,0))
-
+floor.material.pattern = Pattern(gradient, white() , mycolor.Color(1,0,0))
+floor.material.pattern.transformation = Matrix.translation(5,5,5)*Matrix.scaling(12,12,12)
 
 # leftwall = sphere()
 # leftwall.transformation = Matrix.translation(0,0,5) * Matrix.yrotation(-pi
@@ -27,11 +27,11 @@ floor.material.pattern = Pattern(stripe, white(), mycolor.Color(1,0,0))
 
 backdrop = Plane()
 backdrop.transformation = Matrix.translation(0,0,6)* Matrix.xrotation(pi/2)
-backdrop.material.pattern = Pattern(stripe, white(), Color(1,0,0))
+backdrop.material.pattern = Pattern(rings, white(), Color(1,0,0))
 
 
 middle = sphere()
-middle.material.pattern = Pattern(stripe,  white(), Color(1,0,0))
+middle.material.pattern = Pattern(checker,  white(), Color(1,0,0))
 middle.material.pattern.transformation = Matrix.scaling(.5, .5, .5) *Matrix.zrotation(pi/2) * Matrix.translation(-0.5, 1, .5)
 middle.transformation = Matrix.translation(-0.5, 1, .5) #* Matrix.shear(1,1, 0,1, 0,0)
 #middle.material.color = Color(.1, 1, .5)
