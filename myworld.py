@@ -31,7 +31,7 @@ class Material:
 
 
 class Pattern:
-    def __init__(self, f, colora, colorb, transf=mytuple.Matrix.Id()):
+    def __init__(self, f=None, colora=None, colorb=None, transf=mytuple.Matrix.Id()):
         self.func = f
         self.a = colora
         self.b = colorb

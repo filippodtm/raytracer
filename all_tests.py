@@ -1275,3 +1275,10 @@ class TestPatterns(unittest.TestCase):
         self.assertEqual(c1, mycolor.white())
         self.assertEqual(c2, mycolor.black())
         
+
+    def test_patterntransf(self):
+        pattern = myworld.Pattern()
+        self.assertTrue(pattern.transformation.equal(mytuple.Matrix.Id()))
+
+        pattern.transformation = mytuple.Matrix.translation(1,2,3)
+        self.assertTrue(pattern.transformation.equal(mytuple.Matrix.translation(1,2,3)))
