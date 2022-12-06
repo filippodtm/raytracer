@@ -31,10 +31,10 @@ backdrop.material.pattern = Stripepattern(white(), Color(1,0,0))
 
 
 middle = sphere()
-middle.material.pattern = Stripepattern(Color(1,0,0), white())
+middle.material.pattern = Stripepattern( white(), Color(1,0,0))
+middle.material.pattern.transformation = Matrix.scaling(.5, .5, .5) *Matrix.zrotation(pi/2) * Matrix.translation(-0.5, 1, .5)
 middle.transformation = Matrix.translation(-0.5, 1, .5) #* Matrix.shear(1,1, 0,1, 0,0)
 #middle.material.color = Color(.1, 1, .5)
-# middle.material.diffuse = 0.7
 # middle.material.specular = 1 #
 
 
@@ -65,7 +65,7 @@ def scene2(n):
     canvas = camera.render(w)
     canvastoppm(canvas, 'scene_2.ppm')
 
-    print(f"{ datetime.now()-start } (h:min:sec._)   ------>  risoluzione {n}x{int(3/4*n)}   ")
+    print(f"{ datetime.now()-start } (h:min:sec._) -->  risoluzione {n}x{int(3/4*n)}   ")
     return (datetime.now()-start).total_seconds()
 
 

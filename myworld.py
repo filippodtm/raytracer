@@ -26,22 +26,28 @@ class Material:
         return self.color==other.color and math.isclose(self.ambient,
                         other.ambient) and math.isclose(self.diffuse,
                         other.diffuse) and math.isclose(self.specular,
-                       other.specular) and math.isclose(self.shininess,other.shininess)
+                       other.specular) and math.isclose(self.shininess,
+                      other.shininess) # and self.pattern.equal(other.pattern)
 
 
-
-class Stripepattern:
-    def __init__(self, colora, colorb, transf=mytuple.Matrix.Id()):
+class Pattern:
+    def __init__(self, f, colora, colorb, transf=mytuple.Matrix.Id()):
+        self.func = f
         self.a = colora
         self.b = colorb
         self.transformation= transf
-    def stripe_at(self, p: mytuple.Point):
-        if math.floor(p.x)%2==0:
-            return self.a
-        else:
-            return self.b
-    
+        
+    def pattern_at(self, point):
+        return self.func(self.a, self.b, point)
 
+def stripe(a,b, p: mytuple.Point):
+        if math.floor(p.x)%2==0:
+            return a
+        else:
+            return b
+
+# p= Pattern(stripe, mycolor.white(), mycolor.black())
+# print(p.pattern_at(mytuple.Point(0,0,0)))
 
 
 
@@ -61,11 +67,11 @@ class Shape:
     def equal(self,other):
         return self.transformation.equal(other.transformation) and self.material.equal(other.material)
 
-    def stripeobj_at(self, point_wrtworld):
+    def patternobj_at(self, point_wrtworld):
         point_wrtobj = self.transformation.inverse() * point_wrtworld
-        ptr = self.material.pattern
-        point_wrtpattern= ptr.transformation.inverse() * point_wrtobj
-        return ptr.stripe_at(point_wrtpattern)
+        ptrn = self.material.pattern
+        point_wrtpattern= ptrn.transformation.inverse() * point_wrtobj
+        return ptrn.pattern_at(point_wrtpattern)
 
 
     def normal_at(self, p: mytuple.Point):
@@ -157,7 +163,7 @@ def lighting(#material: Material,  #ometto
              inshadow= False):
 
     if obj.material.pattern:   #pag130
-        col = obj.stripeobj_at( point)
+        col = obj.patternobj_at( point)
     else:
         col = obj.material.color
     
